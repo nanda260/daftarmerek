@@ -1,0 +1,374 @@
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    background-color: #B8B8B8;
+}
+
+body.modal-open {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}
+
+section {
+    scroll-margin-top: 50px;
+}
+
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('../img/bg.png');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 80px;
+    position: relative;
+}
+
+.hero-section1 {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 80px;
+    position: relative;
+}
+
+.registration-card {
+    background: white;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 900px;
+    width: 100%;
+    position: relative;
+    margin: 50px 0;
+}
+
+.registration-card h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #161616;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #161616;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.form-control {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 12px 15px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #161616;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* File Upload Container - Updated */
+.file-upload-container {
+    border: 2px dashed #ddd;
+    border-radius: 5px;
+    padding: 1rem;
+    margin-bottom: 0;
+    transition: all 0.3s ease;
+}
+
+.file-upload-container:hover {
+    border-color: #161616;
+    background-color: #f8f9fa;
+}
+
+.file-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0;
+}
+
+.file-upload-container input[type="file"] {
+    display: none;
+}
+
+.file-upload-label {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px 20px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.file-upload-label:hover {
+    background-color: #e9ecef;
+    border-color: #161616;
+}
+
+.file-name {
+    color: #666;
+    font-size: 14px;
+    flex: 1;
+}
+
+.file-info {
+    color: #666;
+    font-size: 14px;
+    margin-top: 0.5rem;
+}
+
+/* KTP Preview Wrapper - Di dalam container */
+.ktp-preview-wrapper {
+    display: none;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.ktp-preview-wrapper.show {
+    display: block;
+}
+
+/* Image Preview */
+.ktp-preview-img {
+    display: none;
+    width: 100%;
+    max-height: 300px;
+    max-width: 400px;
+    border-radius: 8px;
+    border: 1px solid #797979;
+    margin: 0 auto 1rem;
+}
+
+.ktp-preview-img.show {
+    display: block;
+}
+
+/* PDF Preview Box */
+.pdf-preview-box {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
+
+.pdf-preview-box.show {
+    display: block;
+}
+
+.pdf-icon {
+    font-size: 48px;
+    color: #dc3545;
+    margin-bottom: 10px;
+}
+
+/* Preview Actions */
+.preview-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.file-size-info {
+    color: #28a745;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.btn-remove-file {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-remove-file:hover {
+    background: #c82333;
+}
+
+/* Buttons */
+.btn.btn-kembali {
+    background-color: white !important;
+    color: #161616 !important;
+    border: 2px solid #161616 !important;
+    padding: 12px 30px !important;
+    border-radius: 5px !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-kembali:hover {
+    background-color: #161616 !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn.btn-registrasi {
+    background-color: #161616 !important;
+    color: white !important;
+    font-size: 1rem !important;
+    border: 2px solid #161616 !important;
+    padding: 12px 30px !important;
+    border-radius: 5px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-registrasi:hover {
+    background-color: white !important;
+    color: #161616 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #161616;
+}
+
+.footer {
+    background-color: #161616;
+    color: white;
+    text-align: center;
+    padding: 35px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.footer p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.btn-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .registration-card {
+        margin: 20px;
+        padding: 30px 20px;
+    }
+
+    .registration-card h2 {
+        font-size: 1.1rem;
+    }
+
+    .section-title {
+        font-size: 0.9rem;
+    }
+
+    h2 {
+        font-size: 1.1rem;
+    }
+
+    h3 {
+        font-size: 0.9rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        font-size: 0.9rem;
+    }
+
+    .file-upload-label {
+        font-size: 0.7rem;
+    }
+
+    .file-name {
+        font-size: 0.7rem;
+    }
+
+    .file-info {
+        font-size: 0.7rem;
+    }
+
+    .file-input-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .file-upload-label {
+        width: 100%;
+        text-align: center;
+    }
+
+    .ktp-preview-img {
+        max-width: 100%;
+    }
+
+    .btn.btn-kembali,
+    .btn.btn-registrasi {
+        font-size: 0.7rem !important;
+        padding: 10px 25px !important;
+    }
+
+    .footer p {
+        font-size: 12px;
+    }
+
+    .preview-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-remove-file {
+        width: 100%;
+    }
+}

@@ -1,0 +1,159 @@
+:root {
+    --ink: #161616;
+    --muted: #6c757d;
+    --card: #ffffff;
+    --paper: #f4f5f7;
+    --accent: #0d6efd;
+}
+
+body {
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh !important;
+}
+
+body.modal-open {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}
+
+.main-container {
+    padding-top: 100px;
+    min-height: 80vh;
+    h6 {
+        font-weight: 600;
+    }
+}
+
+.quota-card {
+    background: linear-gradient(90deg, #555555, #AEAEAE);
+    color: #fff !important;
+}
+
+.quota-card .text-muted {
+    color: #fff !important;
+}
+.progress-outer {
+    background: linear-gradient(90deg, #bdbdbd 0%, #e0e0e0 100%);
+    border-radius: .75rem;
+    padding: .2rem;
+    height: 50px;
+}
+
+.progress-inner {
+    height: 44px;
+    border-radius: .5rem;
+    background: linear-gradient(90deg, #0140C7 0%, #0D3284 100%);
+}
+
+.stat-card {
+    color: #fff !important;
+}
+
+.stat-title {
+    font-size: .897rem;
+    font-weight: 600 !important;
+    opacity: .95;
+}
+
+.stat-sub {
+    font-size: .8rem;
+    opacity: .9;
+}
+
+
+.bg-scan {
+    background: linear-gradient(90deg, #5E5E5E, #161616);
+}
+
+.bg-dangerish {
+    background: linear-gradient(90deg, #CB0404, #C63B3B);
+}
+
+.bg-infoish {
+    background: linear-gradient(90deg, #0D6987, #0E536A);
+}
+
+.bg-emerald {
+    background: linear-gradient(90deg, #FFA239, #432401);
+}
+
+.bg-violet {
+    background: linear-gradient(90deg, #1E00FF, #0C025B);
+}
+
+.bg-mint {
+    background: linear-gradient(90deg, #06923E, #02491E);
+}
+
+.bg-yellow {
+    background: linear-gradient(90deg, #9FA714, #493E02);
+}
+
+.table thead th {
+    background: #f8f9fa !important;
+    font-size: .9rem;
+}
+
+.table> :not(caption)>*>* {
+    padding: .85rem .75rem;
+}
+
+
+.avatar-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: inline-grid;
+    place-items: center;
+    font-size: .75rem;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+.filters .form-select,
+.filters .form-control {
+    min-width: 190px;
+}
+
+.btn-icon {
+    --bs-btn-padding-y: .35rem;
+    --bs-btn-padding-x: .45rem;
+    --bs-btn-font-size: .85rem;
+}
+.stat-card .stat-title {
+    min-height: 2.4em; /* 2 baris */
+    line-height: 1.2em;
+}
+
+.footer {
+    background-color: #161616;
+    color: white;
+    text-align: center;
+    padding: 35px 0;
+    position: relative;
+    z-index: 2;
+    margin-top: 50px;
+}
+
+.footer p {
+    margin: 0;
+    font-size: 14px;
+}
+
+
+
+@media (max-width: 576px) {
+
+    .filters .form-select,
+    .filters .form-control {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+      .footer p {
+        font-size: 12px;
+    }
+}

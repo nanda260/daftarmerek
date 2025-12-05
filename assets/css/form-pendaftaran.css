@@ -1,0 +1,732 @@
+/* Reset dan Base Styles */
+* {
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #F4F4F4;
+    color: #161616;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Container Styles */
+.main-container {
+    margin-bottom: 2rem;
+}
+
+.cont {
+    padding-top: 120px;
+}
+
+/* Typography Hierarchy */
+.judul {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    color: #161616;
+}
+
+/* Sidebar Sections */
+.sidebar-section {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+}
+
+.sidebar-section h5 {
+    font-weight: 600;
+    font-size: 16px;
+    color: #161616;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.sidebar-section p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+/* Info Lists */
+.info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 15px 0 0;
+}
+
+.info-list>li {
+    color: #161616;
+    font-size: 14px;
+    position: relative;
+    padding-left: 16px;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.info-list>li:before {
+    content: "•";
+    color: #161616;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.info-list .sub-items {
+    margin-left: 16px;
+    margin-top: 8px;
+    list-style: none;
+    padding: 0;
+}
+
+.info-list .sub-items li {
+    font-weight: 400;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 6px;
+    position: relative;
+    padding-left: 12px;
+    line-height: 1.4;
+}
+
+.info-list .sub-items li:before {
+    content: "◦";
+    color: #999;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+/* Links */
+.info-list a {
+    color: #161616;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.info-list a:hover {
+    text-decoration: underline;
+}
+
+/* Help Contact */
+.help-contact {
+    background: #161616;
+    color: white;
+    padding: 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    border: 1px solid #161616;
+    transition: ease-in-out 0.2s;
+}
+
+.help-contact:hover {
+    background: transparent;
+    color: #161616;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Container */
+.form-container {
+    background: white;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h4 {
+    font-weight: 600;
+    font-size: 20px;
+    color: #161616;
+    line-height: 1.3;
+}
+
+.form-container h5 {
+    font-weight: 600;
+    font-size: 18px;
+    color: #161616;
+    margin-top: 24px;
+    line-height: 1.3;
+}
+
+.form-container h6 {
+    font-weight: 600;
+    font-size: 16px;
+    color: #161616;
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.form-label {
+    font-weight: 500;
+    font-size: 14px;
+    color: #161616;
+    margin-bottom: 6px;
+    display: block;
+    line-height: 1.4;
+}
+
+.form-label-alamat {
+    font-size: 13px;
+    color: #6f6e6e;
+    margin-bottom: 6px;
+    display: block;
+    line-height: 1.4;
+}
+
+.form-control,
+.form-select {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #161616;
+    box-shadow: 0 0 0 0.2rem rgba(13, 60, 135, 0.25);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: #999;
+    font-size: 14px;
+}
+
+.file-upload-container {
+    border: 2px dashed #ddd;
+    border-radius: 5px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+}
+
+.file-upload-container:hover {
+    border-color: #161616;
+    background-color: #ffffff;
+}
+
+.file-upload-container input[type="file"] {
+    display: none;
+}
+
+.file-upload-label {
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+    display: block;
+}
+
+.file-upload-label strong {
+    color: #161616;
+    font-weight: 600;
+}
+
+.file-upload-label small {
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+    display: block;
+}
+
+.file-upload-label i {
+    font-size: 24px;
+    color: #161616;
+    margin-bottom: 8px;
+}
+
+.form-check-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: #161616;
+    line-height: 1.4;
+}
+
+.trademark-examples {
+    display: flex;
+    gap: 12px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+}
+
+.trademark-example {
+    text-align: center;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    flex: 1;
+    min-width: 120px;
+    background-color: #fafafa;
+}
+
+.trademark-example img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+.trademark-example h6 {
+    font-weight: 500;
+    font-size: 13px;
+    color: #161616;
+    line-height: 1.3;
+    margin: 0;
+}
+
+.trademark-alternative {
+    background: #f0f0f0;
+    border-radius: 5px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid #e9ecef;
+}
+
+.trademark-alternative h6 {
+    font-weight: 600;
+    font-size: 15px;
+    color: #161616;
+    margin-bottom: 12px;
+}
+
+.form-container p {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.form-container p strong {
+    color: #161616;
+    font-weight: 600;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+    font-size: 13px;
+}
+
+.btn.btn-submitpendaftaran {
+    background-color: #161616;
+    color: white;
+    border: 1px solid #161616;
+    padding: 14px 24px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.4;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.btn.btn-submitpendaftaran:hover {
+    background-color: transparent;
+    color: #161616;
+    border: 1px solid #161616;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-submit i {
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.footer {
+  background-color: #161616;
+  color: white;
+  text-align: center;
+  padding: 35px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 13px;
+    }
+
+    .cont {
+        padding-top: 80px;
+    }
+
+    .judul {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-section {
+        margin-bottom: 12px;
+        padding: 16px;
+    }
+
+    .sidebar-section h5 {
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-section p {
+        font-size: 13px;
+    }
+
+    .info-list>li {
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    .info-list .sub-items li {
+        font-size: 12px;
+    }
+
+    .help-contact {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .form-container {
+        padding: 18px;
+    }
+
+    .form-container h4 {
+        font-size: 18px;
+    }
+
+    .form-container h5 {
+        font-size: 16px;
+        margin-top: 20px;
+        margin-bottom: 14px;
+    }
+
+    .form-container h6 {
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+
+    .form-label {
+        font-size: 13px;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .form-control::placeholder {
+        font-size: 13px;
+    }
+
+    .file-upload-container {
+        padding: 12px;
+    }
+
+    .file-upload-label {
+        font-size: 13px;
+    }
+
+    .file-upload-label small {
+        font-size: 11px;
+    }
+
+    .file-upload-label i {
+        font-size: 20px;
+        margin-bottom: 6px;
+    }
+
+    .form-check-label {
+        font-size: 13px;
+    }
+
+    .trademark-examples {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .trademark-example {
+        padding: 12px;
+    }
+
+    .trademark-example h6 {
+        font-size: 12px;
+    }
+
+    .trademark-alternative {
+        padding: 14px;
+        margin-bottom: 12px;
+    }
+
+    .trademark-alternative h6 {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .form-container p {
+        font-size: 13px;
+    }
+
+    .text-danger {
+        font-size: 12px;
+    }
+
+    .btn.btn-submitpendaftaran {
+        font-size: 12px;
+        padding: 12px 20px;
+        margin-top: 16px;
+    }
+
+    .btn-submitpendaftaran i {
+        font-size: 13px;
+    }
+
+    .footer {
+        padding: 20px 0;
+        margin-top: 24px;
+    }
+
+  .footer p {
+        font-size: 12px;
+    }
+}
+
+.alert-info-pendaftaran {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .alert-info-pendaftaran strong {
+            font-size: 1.1rem;
+        }
+
+        .alert-info-pendaftaran p {
+            margin-bottom: 0;
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+
+        /* Tabel Produk */
+        .produk-table {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .produk-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .produk-table td {
+            padding: 0.5rem;
+            border: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+
+        .produk-table input {
+            width: 100%;
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            padding: 0.375rem 0.75rem;
+        }
+
+        .produk-table .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        /* Preview Image Styles */
+        .preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            min-height: 60px;
+        }
+
+        .preview-container:empty {
+            display: none;
+        }
+
+        .preview-item {
+            position: relative;
+            width: 120px;
+        }
+
+        .preview-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+        }
+
+        .preview-item .pdf-preview {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .preview-item .pdf-preview i {
+            font-size: 3rem;
+            color: #dc3545;
+            margin-bottom: 8px;
+        }
+
+        .preview-item .remove-preview {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        .preview-item .remove-preview:hover {
+            background: #c82333;
+        }
+
+        /* Drag & Drop Styles */
+        .file-drop-zone {
+            border: 2px dashed #ced4da;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-drop-zone:hover,
+        .file-drop-zone.drag-over {
+            border-color: #667eea;
+            background-color: #e7f1ff;
+        }
+
+        .file-drop-zone i {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .legalitas-upload-section {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .legalitas-upload-section h6 {
+            color: #495057;
+            margin-bottom: 0.75rem;
+        }
+
+        body.modal-open {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}
+
+/* Tambahkan di form-pendaftaran.css */
+
+/* Legalitas File List Table */
+#legalitasFileList .table {
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+#legalitasFileList .table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    padding: 0.75rem 0.5rem;
+    vertical-align: middle;
+}
+
+#legalitasFileList .table td {
+    padding: 0.5rem;
+    vertical-align: middle;
+}
+
+#legalitasFileList .table td small {
+    font-size: 12px;
+    word-break: break-word;
+}
+
+#legalitasFileList .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+#legalitasFileList .form-select-sm {
+    font-size: 12px;
+    padding: 0.375rem 0.5rem;
+}
+
+/* Responsive untuk mobile */
+@media (max-width: 768px) {
+    #legalitasFileList .table-responsive {
+        font-size: 11px;
+    }
+    
+    #legalitasFileList .table th,
+    #legalitasFileList .table td {
+        padding: 0.4rem 0.3rem;
+    }
+    
+    #legalitasFileList .form-select-sm {
+        font-size: 11px;
+        padding: 0.25rem 0.35rem;
+    }
+    
+    #legalitasFileList .btn-sm {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+}

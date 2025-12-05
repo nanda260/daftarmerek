@@ -1,0 +1,192 @@
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+section {
+  scroll-margin-top: 50px;
+}
+
+body.modal-open {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}
+
+.login-container {
+    min-height: 100vh;
+    background-image: url('../img/bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 80px;
+    position: relative;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1;
+}
+
+.login-card {
+    background: white;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.login-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #161616;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.login-subtitle {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+.form-label {
+    font-weight: 400;
+    color: #161616;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.form-control {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 12px 15px;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+}
+
+
+.login {
+    background-color: #161616;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border: 2px solid #161616;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: auto;
+}
+
+.login:hover {
+    background-color: #fff;
+    color: black;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-register {
+    background-color: transparent;
+    color: #161616;
+    border: 2px solid #161616;
+    padding: 10px 30px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-register:hover {
+    background-color: #161616;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #161616;
+}
+
+.footer {
+    background-color: #161616;
+    color: white;
+    text-align: center;
+    padding: 35px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.footer p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+@media (max-width: 768px) {
+    .login-card {
+        margin: 20px;
+        padding: 30px 20px;
+    }
+    
+    .login-title {
+        font-size: 1.1rem;
+    }
+    
+    .login-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .section-title {
+        font-size: 0.9rem;
+    }
+    
+    h2 {
+        font-size: 1.1rem;
+    }
+    
+    h3 {
+        font-size: 0.9rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+    
+    .form-control {
+        font-size: 0.9rem;
+    }
+    
+    .login,
+    .btn-register {
+        font-size: 0.7rem;
+        padding: 10px 25px;
+    }
+
+    .footer p {
+        font-size: 12px !important;
+    }
+}

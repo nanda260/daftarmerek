@@ -1,0 +1,10 @@
+{
+    "name": "daftarmerek/app",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "^7.0",
+        "tecnickcom/tcpdf": "^6.10",
+        "mpdf/mpdf": "^8.2",
+        "phpoffice/phpword": "^1.3"
+    }
+}

@@ -1,0 +1,209 @@
+/* ============================================
+   FILE PREVIEW SYSTEM STYLING
+   ============================================ */
+
+#alertContainer {
+    position: sticky;
+    top: 80px;
+    z-index: 1040;
+    margin-bottom: 1rem;
+}
+
+#alertContainer .alert {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Preview Container */
+#logoPreview,
+#nibPreview,
+#produkPreview,
+#prosesPreview,
+#aktaPreview {
+    display: none;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+/* Preview Item */
+.preview-item {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.preview-item img {
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.preview-item img:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.preview-item .pdf-preview {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.preview-item .pdf-preview:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Remove Button */
+.remove-preview {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #dc3545;
+    color: white;
+    border: 2px solid white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+.remove-preview:active {
+    transform: scale(0.95);
+}
+
+/* File Drop Zone - Enhanced */
+.file-drop-zone {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.file-drop-zone:hover {
+    border-color: #0d6efd;
+    background-color: #f0f7ff;
+}
+
+.file-drop-zone.drag-over {
+    border-color: #6C757D;
+    background-color: #e7f1ff;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+.file-drop-zone i {
+    font-size: 2.5rem;
+    color: #6C757D;
+    margin-bottom: 10px;
+}
+
+.file-drop-zone p {
+    margin: 10px 0;
+    color: #495057;
+}
+
+.file-drop-zone p strong {
+    color: #212529;
+}
+
+.file-drop-zone small {
+    color: #6c757d;
+    display: block;
+}
+
+/* File Name and Size */
+.preview-item div[style*="font-size: 11px"] {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.preview-item div[style*="font-size: 10px"] {
+    margin-top: 3px;
+}
+
+/* Modal Styling */
+#filePreviewModal .modal-content {
+    border: 1px solid #dee2e6;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+#filePreviewModal .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#filePreviewModal .modal-title {
+    font-weight: 600;
+    color: #212529;
+}
+
+#modalPreviewContent {
+    background-color: #f8f9fa;
+}
+
+#modalPreviewContent img {
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#modalPreviewContent iframe {
+    border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .file-drop-zone {
+        padding: 20px;
+    }
+
+    .file-drop-zone i {
+        font-size: 2rem;
+    }
+
+    .preview-item {
+        width: calc(50% - 5px);
+    }
+
+    #logoPreview,
+    #nibPreview,
+    #produkPreview,
+    #prosesPreview,
+    #aktaPreview {
+        gap: 5px;
+        padding: 10px;
+    }
+}
+
+    #signaturePad {
+        border: 2px solid #ddd !important;
+        border-radius: 4px;
+        background-color: #fff !important;
+        display: block !important;
+        max-width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 6;
+    }
+
+@media (max-width: 480px) {
+    .preview-item {
+        width: 100%;
+    }
+
+    #filePreviewModal .modal-dialog {
+        max-width: 90vw !important;
+    }
+
+    #filePreviewModal .modal-body {
+        height: 50vh !important;
+    }
+}
