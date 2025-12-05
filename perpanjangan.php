@@ -4,7 +4,7 @@ date_default_timezone_set('Asia/Jakarta');
 
 include 'process/config_db.php';
 
-// ===== CEK APAKAH USER SUDAH LOGIN =====
+// CEK APAKAH USER SUDAH LOGIN
 if (!isset($_SESSION['NIK_NIP'])) {
     // Jika AJAX request
     if (isset($_POST['ajax_action'])) {
