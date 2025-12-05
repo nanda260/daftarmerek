@@ -165,6 +165,198 @@ $foto_proses = json_decode($pengajuan['foto_proses'], true) ?? [];
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- Section Persyaratan Lanjutan -->
+                                        <div class="mt-4">
+                                            <div class="card border-info">
+                                                <div class="card-body">
+                                                    <h6 class="fw-bold mb-3 text-info">
+                                                        <i class="fa-solid fa-building-columns me-2"></i>
+                                                        Langkah Selanjutnya ke Kementerian Hukum
+                                                    </h6>
+
+                                                    <div class="alert alert-info mb-3">
+                                                        <div class="d-flex flex-column">
+                                                            <div class="mb-2">
+                                                                <i class="fa-solid fa-info-circle me-2"></i>
+                                                                Untuk melanjutkan <?php echo $pengajuan['tipe_pengajuan'] === 'mandiri' ? 'pendaftaran' : 'perpanjangan'; ?> merek, silakan ke <strong>Kanwil Kementerian Hukum dan HAM Jawa Timur</strong> dengan membawa persyaratan berikut:
+                                                            </div>
+
+                                                            <!-- Tombol Daftar Online -->
+                                                            <div class="mt-2">
+                                                                <a href="https://merek.dgip.go.id/" target="_blank" class="btn btn-sm btn-info d-inline-flex align-items-center">
+                                                                    <i class="fa-solid fa-globe me-2"></i>
+                                                                    Daftar Secara Online di Direktorat Jenderal Kekayaan Intelektual
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <strong>Persyaratan yang Harus Dibawa:</strong>
+                                                        <ol class="mt-2">
+                                                            <li>Surat Keterangan IKM dari Disperindag</li>
+                                                            <li>Soft File dan Asli:
+                                                                <ul>
+                                                                    <?php if ($pengajuan['tipe_pengajuan'] === 'mandiri'): ?>
+                                                                        <li>Pernyataan UKM bermaterai</li>
+                                                                        <li>KTP</li>
+                                                                        <li>Tanda Tangan</li>
+                                                                        <li>Etiket Merek</li>
+                                                                    <?php else: ?>
+                                                                        <li>Surat pernyataan perpanjangan jangka waktu</li>
+                                                                        <li>Sertifikat Merek Lama</li>
+                                                                        <li>KTP</li>
+                                                                        <li>Etiket Merek</li>
+                                                                    <?php endif; ?>
+                                                                </ul>
+                                                            </li>
+                                                            <?php if ($pengajuan['tipe_pengajuan'] === 'mandiri'): ?>
+                                                                <li>Biaya Pendaftaran <strong>Rp 500.000</strong> untuk tiap merek</li>
+                                                            <?php else: ?>
+                                                                <li>Biaya Perpanjangan <strong>Rp 1.000.000</strong> untuk tiap merek</li>
+                                                            <?php endif; ?>
+                                                        </ol>
+                                                    </div>
+
+                                                    <!-- Download Dokumen Persyaratan -->
+                                                    <div class="mb-3">
+                                                        <strong>Download Dokumen Persyaratan:</strong>
+                                                        <div class="row g-3 mt-2">
+                                                            <!-- Surat Keterangan IKM -->
+                                                            <div class="col-md-6 col-lg-4">
+                                                                <div class="card border-success h-100">
+                                                                    <div class="card-body">
+                                                                        <div class="text-center mb-3">
+                                                                            <i class="fa-solid fa-file text-success" style="font-size: 3rem;"></i>
+                                                                        </div>
+                                                                        <h6 class="fw-bold text-center mb-3">Surat Keterangan IKM</h6>
+                                                                        <div class="alert alert-success mb-3">
+                                                                            <small><i class="fa-solid fa-check-circle me-1"></i><strong>File Tersedia</strong></small>
+                                                                        </div>
+                                                                        <div class="d-grid gap-2">
+                                                                            <button class="btn btn-sm btn-outline-success btn-view"
+                                                                                data-src="<?php echo htmlspecialchars($pengajuan['file_surat_keterangan']); ?>"
+                                                                                data-title="Surat Keterangan IKM">
+                                                                                <i class="fa-solid fa-eye me-1"></i>Preview
+                                                                            </button>
+                                                                            <a class="btn btn-success btn-sm" href="<?php echo htmlspecialchars($pengajuan['file_surat_keterangan']); ?>" download>
+                                                                                <i class="fa-solid fa-download me-1"></i> Download
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <?php if ($pengajuan['tipe_pengajuan'] === 'mandiri'): ?>
+                                                                <!-- Pernyataan UKM Bermaterai -->
+                                                                <div class="col-md-6 col-lg-4">
+                                                                    <div class="card border-primary h-100">
+                                                                        <div class="card-body">
+                                                                            <div class="text-center mb-3">
+                                                                                <i class="fa-solid fa-file-signature text-primary" style="font-size: 3rem;"></i>
+                                                                            </div>
+                                                                            <h6 class="fw-bold text-center mb-3">Pernyataan UKM Bermaterai</h6>
+                                                                            <div class="alert alert-primary mb-3">
+                                                                                <small><i class="fa-solid fa-info-circle me-1"></i><strong>Template Tersedia</strong></small>
+                                                                            </div>
+                                                                            <div class="d-grid gap-2">
+                                                                                <a class="btn btn-primary btn-sm" href="uploads/Surat Pernyataan UMK.docx" download>
+                                                                                    <i class="fa-solid fa-download me-1"></i> Download Template
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            <?php else: ?>
+                                                                <!-- Surat Pernyataan Perpanjangan -->
+                                                                <div class="col-md-6 col-lg-4">
+                                                                    <div class="card border-primary h-100">
+                                                                        <div class="card-body">
+                                                                            <div class="text-center mb-3">
+                                                                                <i class="fa-solid fa-file-signature text-primary" style="font-size: 3rem;"></i>
+                                                                            </div>
+                                                                            <h6 class="fw-bold text-center mb-3">Surat Pernyataan Perpanjangan</h6>
+                                                                            <div class="alert alert-primary mb-3">
+                                                                                <small><i class="fa-solid fa-info-circle me-1"></i><strong>Template Tersedia</strong></small>
+                                                                            </div>
+                                                                            <div class="d-grid gap-2">
+                                                                                <a class="btn btn-primary btn-sm" href="uploads/Surat Pernyataan Perpanjangan Jangka Waktu Pelindungan Merek.docx" download>
+                                                                                    <i class="fa-solid fa-download me-1"></i> Download Template
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Sertifikat Merek Lama -->
+                                                                <?php
+                                                                if ($pengajuan['id_pendaftaran']) {
+                                                                    $stmt_sertifikat = $pdo->prepare("
+                                                                        SELECT file_path FROM lampiran 
+                                                                        WHERE id_pendaftaran = ? AND id_jenis_file = 7
+                                                                        ORDER BY tgl_upload DESC LIMIT 1
+                                                                    ");
+                                                                    $stmt_sertifikat->execute([$pengajuan['id_pendaftaran']]);
+                                                                    $sertifikat_lama = $stmt_sertifikat->fetch(PDO::FETCH_ASSOC);
+
+                                                                    if ($sertifikat_lama && file_exists($sertifikat_lama['file_path'])):
+                                                                ?>
+                                                                        <div class="col-md-6 col-lg-4">
+                                                                            <div class="card border-warning h-100">
+                                                                                <div class="card-body">
+                                                                                    <div class="text-center mb-3">
+                                                                                        <i class="fa-solid fa-certificate text-warning" style="font-size: 3rem;"></i>
+                                                                                    </div>
+                                                                                    <h6 class="fw-bold text-center mb-3">Sertifikat Merek Lama</h6>
+                                                                                    <div class="alert alert-warning mb-3">
+                                                                                        <small><i class="fa-solid fa-check-circle me-1"></i><strong>File Tersedia</strong></small>
+                                                                                    </div>
+                                                                                    <div class="d-grid gap-2">
+                                                                                        <button class="btn btn-sm btn-outline-warning btn-view"
+                                                                                            data-src="<?php echo htmlspecialchars($sertifikat_lama['file_path']); ?>"
+                                                                                            data-title="Sertifikat Merek Lama">
+                                                                                            <i class="fa-solid fa-eye me-1"></i>Preview
+                                                                                        </button>
+                                                                                        <a class="btn btn-warning btn-sm" href="<?php echo htmlspecialchars($sertifikat_lama['file_path']); ?>" download>
+                                                                                            <i class="fa-solid fa-download me-1"></i> Download
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                <?php
+                                                                    endif;
+                                                                }
+                                                                ?>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Lokasi Kanwil -->
+                                                    <div class="mb-3">
+                                                        <strong>Lokasi Kanwil Kemenkumham Jawa Timur:</strong>
+                                                        <div class="mt-2">
+                                                            <iframe
+                                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.7409936429817!2d112.74362617482404!3d-7.270286971438131!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbd93ee1550f%3A0x62d2dfd83b6620d9!2sKanwil%20Kementerian%20Hukum%20Jawa%20Timur!5e0!3m2!1sid!2sid!4v1764941939573!5m2!1sid!2sid"
+                                                                width="100%"
+                                                                height="300"
+                                                                style="border:0; border-radius: 8px;"
+                                                                allowfullscreen=""
+                                                                loading="lazy"
+                                                                referrerpolicy="no-referrer-when-downgrade">
+                                                            </iframe>
+                                                        </div>
+                                                        <div class="d-grid gap-2 mt-2">
+                                                            <a class="btn btn-primary btn-sm"
+                                                                href="https://www.google.com/maps/place/Kanwil+Kementerian+Hukum+Jawa+Timur/@-7.2703083,112.7444845,17z/data=!4m6!3m5!1s0x2dd7fbd93ee1550f:0x62d2dfd83b6620d9!8m2!3d-7.2702923!4d112.7462011!16s%2Fg%2F1hc542db_?entry=ttu&g_ep=EgoyMDI1MTIwMi4wIKXMDSoASAFQAw%3D%3D"
+                                                                target="_blank">
+                                                                <i class="fa-solid fa-map-location-dot me-2"></i>Buka di Google Maps
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 <?php elseif ($statusKey === 'suratterbit' && !$pengajuan['file_surat_keterangan']): ?>
                                     <div class="alert alert-warning mt-3">
@@ -286,112 +478,6 @@ $foto_proses = json_decode($pengajuan['foto_proses'], true) ?? [];
                             <p><?php echo htmlspecialchars($pengajuan['no_telp_pemilik']); ?></p>
                         </div>
                     </div>
-                </div>
-
-                <!-- Dokumen yang Tersedia -->
-                <div class="info-card mt-4">
-                    <div class="info-header">
-                        <h2 class="info-title">
-                            <i class="fa-solid fa-folder-open me-2"></i>
-                            Dokumen Pengajuan
-                        </h2>
-                    </div>
-
-                    <hr class="border-2 border-secondary w-100 line" />
-
-                    <div class="row g-3">
-                        <!-- NIB -->
-                        <?php if (!empty($pengajuan['nib_file'])):
-                            // Cek apakah nib_file adalah JSON array atau path langsung
-                            $nib_files = @json_decode($pengajuan['nib_file'], true);
-                            if (!$nib_files) {
-                                // Jika bukan JSON, anggap sebagai path langsung
-                                $nib_files = [$pengajuan['nib_file']];
-                            }
-                            if ($nib_files && is_array($nib_files) && !empty($nib_files[0]) && file_exists($nib_files[0])):
-                        ?>
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="card border-secondary h-100">
-                                        <div class="card-body">
-                                            <div class="text-center mb-3">
-                                                <i class="fa-solid fa-file-alt text-secondary" style="font-size: 3rem;"></i>
-                                            </div>
-                                            <h6 class="fw-bold text-center mb-3">NIB (Nomor Induk Berusaha)</h6>
-                                            <div class="alert alert-success mb-3">
-                                                <small><i class="fa-solid fa-check-circle me-1"></i><strong>File Tersedia</strong></small>
-                                            </div>
-                                            <div class="d-grid gap-2">
-                                                <button class="btn btn-sm btn-outline-secondary btn-view"
-                                                    data-src="<?php echo htmlspecialchars($nib_files[0]); ?>"
-                                                    data-title="NIB">
-                                                    <i class="fa-solid fa-eye me-1"></i>Preview
-                                                </button>
-                                                <a class="btn btn-secondary btn-sm" href="<?php echo htmlspecialchars($nib_files[0]); ?>" download>
-                                                    <i class="fa-solid fa-download me-1"></i> Download
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        <?php endif;
-                        endif; ?>
-
-                        <!-- Surat Permohonan -->
-                        <?php if ($pengajuan['suratpermohonan_file'] && file_exists($pengajuan['suratpermohonan_file'])): ?>
-                            <div class="col-md-6 col-lg-4">
-                                <div class="card border-primary h-100">
-                                    <div class="card-body">
-                                        <div class="text-center mb-3">
-                                            <i class="fa-solid fa-file-signature text-primary" style="font-size: 3rem;"></i>
-                                        </div>
-                                        <h6 class="fw-bold text-center mb-3">Surat Permohonan</h6>
-                                        <div class="alert alert-success mb-3">
-                                            <small><i class="fa-solid fa-check-circle me-1"></i><strong>File Tersedia</strong></small>
-                                        </div>
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-sm btn-outline-primary btn-view"
-                                                data-src="<?php echo htmlspecialchars($pengajuan['suratpermohonan_file']); ?>"
-                                                data-title="Surat Permohonan">
-                                                <i class="fa-solid fa-eye me-1"></i>Preview
-                                            </button>
-                                            <a class="btn btn-primary btn-sm" href="<?php echo htmlspecialchars($pengajuan['suratpermohonan_file']); ?>" download>
-                                                <i class="fa-solid fa-download me-1"></i> Download
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-
-                        <!-- Akta (jika ada) -->
-                        <?php if ($pengajuan['akta_file'] && file_exists($pengajuan['akta_file'])): ?>
-                            <div class="col-md-6 col-lg-4">
-                                <div class="card border-info h-100">
-                                    <div class="card-body">
-                                        <div class="text-center mb-3">
-                                            <i class="fa-solid fa-file-contract text-info" style="font-size: 3rem;"></i>
-                                        </div>
-                                        <h6 class="fw-bold text-center mb-3">Akta Perusahaan</h6>
-                                        <div class="alert alert-success mb-3">
-                                            <small><i class="fa-solid fa-check-circle me-1"></i><strong>File Tersedia</strong></small>
-                                        </div>
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-sm btn-outline-info btn-view"
-                                                data-src="<?php echo htmlspecialchars($pengajuan['akta_file']); ?>"
-                                                data-title="Akta">
-                                                <i class="fa-solid fa-eye me-1"></i>Preview
-                                            </button>
-                                            <a class="btn btn-info btn-sm" href="<?php echo htmlspecialchars($pengajuan['akta_file']); ?>" download>
-                                                <i class="fa-solid fa-download me-1"></i> Download
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-
-
                 </div>
 
                 <!-- Tombol Back -->

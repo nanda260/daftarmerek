@@ -796,7 +796,7 @@ const desaKelurahan = {
 document.getElementById('kecamatan').addEventListener('change', function () {
     const kecamatan = this.value;
     const kelDesaSelect = document.getElementById('kel_desa');
-    kelDesaSelect.innerHTML = '<option value="">-- Pilih Kelurahan/Desa --</option>';
+    kelDesaSelect.innerHTML = '<option value="">-Pilih Kelurahan/Desa-</option>';
     if (kecamatan && desaKelurahan[kecamatan]) {
         desaKelurahan[kecamatan].forEach(function (desa) {
             const option = document.createElement('option');

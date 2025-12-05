@@ -1,3 +1,14 @@
+<?php
+// Ambil contact person dan jenis usaha dari pengaturan
+require_once 'process/config_db.php';
+
+// Ambil contact person dari pengaturan
+$stmt_contact = $pdo->prepare("SELECT setting_value FROM pengaturan WHERE setting_key = 'contact_person'");
+$stmt_contact->execute();
+$contact_data = $stmt_contact->fetch(PDO::FETCH_ASSOC);
+$contact_person = $contact_data ? $contact_data['setting_value'] : '6281235051286'; // Default jika tidak ada
+?>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -388,7 +399,7 @@
 </div>
 
 <!-- WhatsApp Floating Button -->
-<a href="https://wa.me/6281235051286?text=Halo%2C%20saya%20ingin%20bertanya%20mengenai%20layanan%20industri" 
+<a href="https://wa.me/<?php echo htmlspecialchars($contact_person); ?>?text=Halo%2C%20saya%20ingin%20bertanya%20mengenai%20layanan%20industri" 
    class="whatsapp-float" 
    target="_blank" 
    rel="noopener noreferrer"
@@ -516,7 +527,7 @@
 
         notifBody.innerHTML = html;
 
-        // ✅ PERBAIKAN: Add click event dengan redirect ke lihat-pengajuan-fasilitasi.php
+        // Add click event dengan redirect ke lihat-pengajuan-fasilitasi.php
         document.querySelectorAll('.notif-item').forEach(item => {
             item.addEventListener('click', function() {
                 const notifId = this.getAttribute('data-id');
@@ -529,7 +540,7 @@
                     markAsRead(notifId, this);
                 }
                 
-                // ✅ REDIRECT KE HALAMAN PENGAJUAN FASILITASI
+                // Redirect ke halaman pengajuan fasilitasi
                 console.log('➡️ Redirecting to lihat-pengajuan-fasilitasi.php');
                 setTimeout(() => {
                     window.location.href = 'lihat-pengajuan-fasilitasi.php';

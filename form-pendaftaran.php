@@ -20,6 +20,17 @@ try {
     $master_legalitas = [];
 }
 
+// Ambil contact person dari pengaturan
+try {
+    $stmt_contact = $pdo->prepare("SELECT setting_value FROM pengaturan WHERE setting_key = 'contact_person'");
+    $stmt_contact->execute();
+    $contact_data = $stmt_contact->fetch(PDO::FETCH_ASSOC);
+    $contact_person = $contact_data ? $contact_data['setting_value'] : '6281235051286';
+} catch (PDOException $e) {
+    error_log("Error fetching contact person: " . $e->getMessage());
+    $contact_person = '6281235051286';
+}
+
 // FORM SUBMISSION
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
@@ -438,7 +449,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="sidebar-section border border-light-subtle">
                     <h5>Bantuan</h5>
                     <p>Jika ada kendala dalam mengisi formulir bisa menghubungi kami dibawah ini.</p>
-                    <a href="https://wa.me/6281235051286?text=Halo%2C%20saya%20ingin%20bertanya%20mengenai%20layanan%20industri" class="help-contact" target="_blank">
+                    <a href="https://wa.me/<?php echo htmlspecialchars($contact_person); ?>?text=Halo%2C%20saya%20ingin%20bertanya%20mengenai%20layanan%20industri" class="help-contact" target="_blank">
                         <i class="fab fa-whatsapp pe-2"></i> Bidang Perindustrian Disperindag Sidoarjo
                     </a>
                     <p class="text-danger mt-2">* Tidak menerima panggilan, hanya chat.</p>
@@ -480,7 +491,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="mb-3">
                                 <label class="form-label-alamat">Kecamatan <span class="text-danger">*</span></label>
                                 <select name="kecamatan" id="kecamatan" class="form-control" required>
-                                    <option value="">-- Pilih Kecamatan --</option>
+                                    <option value="">-Pilih Kecamatan-</option>
                                     <option value="Sidoarjo">Sidoarjo</option>
                                     <option value="Buduran">Buduran</option>
                                     <option value="Candi">Candi</option>
@@ -508,7 +519,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="col-md-6 mb-3">
                                 <label class="form-label-alamat">Kelurahan/Desa <span class="text-danger">*</span></label>
                                 <select name="kel_desa" id="kel_desa" class="form-control" required>
-                                    <option value="">-- Pilih Kecamatan Terlebih Dahulu --</option>
+                                    <option value="">-Pilih Kecamatan Terlebih Dahulu-</option>
                                 </select>
                             </div>
                             <div class="mb-3">

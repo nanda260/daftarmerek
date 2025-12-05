@@ -187,6 +187,44 @@
         padding-left: 1.2rem;
     }
 
+    /* Floating Settings Button - Simple */
+    .floating-settings-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: #161616e7;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        text-decoration: none;
+    }
+
+    .floating-settings-btn:hover {
+        background: #333333cd;
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .floating-settings-btn {
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            bottom: 20px;
+            right: 20px;
+        }
+    }
+
     @media (max-width: 768px) {
         .section-title {
             font-size: 1rem;
@@ -265,6 +303,11 @@
     </ul>
 </div>
 <div id="overlay"></div>
+
+<!-- Floating Settings Button -->
+<a href="pengaturan-admin.php" class="floating-settings-btn" title="Pengaturan">
+    <i class="bi bi-gear-fill"></i>
+</a>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>

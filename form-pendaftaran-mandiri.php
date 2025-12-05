@@ -63,6 +63,22 @@ $stmt_pengajuan = $pdo->prepare("
 $stmt_pengajuan->execute([$nik]);
 $data_pengajuan_existing = $stmt_pengajuan->fetch(PDO::FETCH_ASSOC);
 
+// Ambil contact person dari pengaturan
+try {
+    $stmt_contact = $pdo->prepare("SELECT setting_value FROM pengaturan WHERE setting_key = 'contact_person'");
+    $stmt_contact->execute();
+    $contact_data = $stmt_contact->fetch(PDO::FETCH_ASSOC);
+    $contact_person = $contact_data ? $contact_data['setting_value'] : '6281235051286';
+} catch (PDOException $e) {
+    error_log("Error fetching contact person: " . $e->getMessage());
+    $contact_person = '6281235051286';
+}
+
+// Ambil jenis usaha dari pengaturan
+$stmt_jenis_usaha = $pdo->prepare("SELECT setting_value FROM pengaturan WHERE setting_key = 'jenis_usaha'");
+$stmt_jenis_usaha->execute();
+$jenis_usaha_data = $stmt_jenis_usaha->fetch(PDO::FETCH_ASSOC);
+$jenis_usaha_list = $jenis_usaha_data ? json_decode($jenis_usaha_data['setting_value'], true) : [];
 
 $error = '';
 $success = '';
@@ -86,9 +102,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_mandiri'])) {
         $alamat_usaha .= 'SIDOARJO, JAWA TIMUR';
 
         $jenis_usaha = htmlspecialchars($_POST['jenis_usaha'] ?? '', ENT_QUOTES);
-        if ($jenis_usaha === 'lainnya') {
-            $jenis_usaha = htmlspecialchars($_POST['jenis_usaha_lainnya'] ?? '', ENT_QUOTES);
-        }
         $produk = htmlspecialchars($_POST['produk'] ?? '', ENT_QUOTES);
         $jml_tenaga_kerja = (int)($_POST['jml_tenaga_kerja'] ?? 0);
         $jenis_pemohon = htmlspecialchars($_POST['jenis_pemohon'] ?? 'perseorangan', ENT_QUOTES);
@@ -511,7 +524,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_mandiri'])) {
                 <div class="sidebar-section border border-light-subtle">
                     <h5>Bantuan</h5>
                     <p>Jika ada kendala dalam mengisi formulir bisa menghubungi kami dibawah ini.</p>
-                    <a href="https://wa.me/6281235051286?text=Halo%2C%20saya%20ingin%20bertanya%20mengenai%20layanan%20industri" class="help-contact" target="_blank">
+                    <a href="https://wa.me/<?php echo htmlspecialchars($contact_person); ?>?text=Halo%2C%20saya%20ingin%20bertanya%20mengenai%20layanan%20industri" class="help-contact" target="_blank">
                         <i class="fab fa-whatsapp pe-2"></i> Bidang Perindustrian Disperindag Sidoarjo
                     </a>
                     <p class="text-danger mt-2">* Tidak menerima panggilan, hanya chat.</p>
@@ -555,7 +568,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_mandiri'])) {
                             <div class="mb-3">
                                 <label class="form-label-alamat">Kecamatan <span class="text-danger">*</span></label>
                                 <select name="kecamatan_usaha" id="kecamatan_usaha" class="form-control" required>
-                                    <option value="">-- Pilih Kecamatan --</option>
+                                    <option value="">-Pilih Kecamatan-</option>
                                     <option value="Sidoarjo" <?php echo (isset($data_usaha_existing['kecamatan']) && $data_usaha_existing['kecamatan'] == 'Sidoarjo') ? 'selected' : ''; ?>>Sidoarjo</option>
                                     <option value="Buduran" <?php echo (isset($data_usaha_existing['kecamatan']) && $data_usaha_existing['kecamatan'] == 'Buduran') ? 'selected' : ''; ?>>Buduran</option>
                                     <option value="Candi" <?php echo (isset($data_usaha_existing['kecamatan']) && $data_usaha_existing['kecamatan'] == 'Candi') ? 'selected' : ''; ?>>Candi</option>
@@ -585,7 +598,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_mandiri'])) {
                             <div class="col-md-6 mb-3">
                                 <label class="form-label-alamat">Kelurahan/Desa <span class="text-danger">*</span></label>
                                 <select name="kel_desa_usaha" id="kel_desa_usaha" class="form-control" required>
-                                    <option value="">-- Pilih Kecamatan Terlebih Dahulu --</option>
+                                    <option value="">-Pilih Kecamatan Terlebih Dahulu-</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -604,30 +617,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_mandiri'])) {
                                 <label class="form-label">Jenis Usaha <span class="text-danger">*</span></label>
                                 <select name="jenis_usaha" class="form-select" id="jenis_usaha" required>
                                     <option value="">Pilih Jenis Usaha</option>
-                                    <option value="Fashion dan Tekstil">Fashion & Tekstil</option>
-                                    <option value="Kuliner dan Makanan">Kuliner & Makanan</option>
-                                    <option value="Kerajinan dan Seni">Kerajinan & Seni</option>
-                                    <option value="Elektronik dan Teknologi">Elektronik & Teknologi</option>
-                                    <option value="Pertanian dan Agribisnis">Pertanian & Agribisnis</option>
-                                    <option value="Jasa dan Konsultasi">Jasa & Konsultasi</option>
-                                    <option value="Industri Kimia">Industri Kimia</option>
-                                    <option value="Logistik dan Transportasi">Logistik & Transportasi</option>
-                                    <option value="Perhotelan dan Pariwisata">Perhotelan & Pariwisata</option>
-                                    <option value="Pendidikan dan Pelatihan">Pendidikan & Pelatihan</option>
-                                    <option value="Kesehatan dan Kecantikan">Kesehatan & Kecantikan</option>
-                                    <option value="Konstruksi dan Real Estate">Konstruksi & Real Estate</option>
-                                    <option value="lainnya">Lainnya (Sebutkan)</option>
+                                    <?php foreach ($jenis_usaha_list as $jenis): ?>
+                                        <option value="<?php echo htmlspecialchars($jenis); ?>">
+                                            <?php echo htmlspecialchars($jenis); ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Produk <span class="text-danger">*</span></label>
                                 <input type="text" name="produk" class="form-control" placeholder="Produk yang dihasilkan" required>
-                            </div>
-
-                            <div class="col-md-6 mb-3" id="jenis_usaha_lainnya_field" style="display: none;">
-                                <label class="form-label">Sebutkan Jenis Usaha Lainnya <span class="text-danger">*</span></label>
-                                <input type="text" name="jenis_usaha_lainnya" id="jenis_usaha_lainnya" class="form-control" placeholder="Masukkan jenis usaha Anda">
                             </div>
                         </div>
 
@@ -932,6 +932,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_mandiri'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/preview-file-mandiri.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/inputmask.min.js"></script>
     <script>
         // ===== KELURAHAN/DESA DATA =====
         const desaKelurahan = {
@@ -965,7 +966,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_mandiri'])) {
             const existingKelDesa = '<?php echo $data_usaha_existing['kel_desa']; ?>';
 
             if (existingKecamatan && desaKelurahan[existingKecamatan]) {
-                kelDesaSelect.innerHTML = '<option value="">-- Pilih Kelurahan/Desa --</option>';
+                kelDesaSelect.innerHTML = '<option value="">-Pilih Kelurahan/Desa-</option>';
                 desaKelurahan[existingKecamatan].forEach(function(desa) {
                     const option = document.createElement('option');
                     option.value = desa;
@@ -981,7 +982,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_mandiri'])) {
 
         kecamatanSelect.addEventListener('change', function() {
             const kecamatan = this.value;
-            kelDesaSelect.innerHTML = '<option value="">-- Pilih Kelurahan/Desa --</option>';
+            kelDesaSelect.innerHTML = '<option value="">-Pilih Kelurahan/Desa-</option>';
 
             if (kecamatan && desaKelurahan[kecamatan]) {
                 desaKelurahan[kecamatan].forEach(function(desa) {
@@ -995,35 +996,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_mandiri'])) {
                 kelDesaSelect.disabled = true;
             }
         });
-
-        // RT/RW FORMATTING
-        document.getElementById('rt_rw_usaha').addEventListener('input', function(e) {
-            let value = this.value;
-            value = value.replace(/[^\d\/]/g, '');
-            const slashCount = (value.match(/\//g) || []).length;
-            if (slashCount > 1) {
-                value = value.substring(0, value.lastIndexOf('/'));
-            }
-            this.value = value;
-        });
-
-        document.getElementById('rt_rw_usaha').addEventListener('blur', function() {
-            let value = this.value.trim();
-            if (!value) return;
-
-            let parts = value.split('/');
-            let rt = parts[0] ? parts[0].replace(/\D/g, '') : '';
-            let rw = parts[1] ? parts[1].replace(/\D/g, '') : '';
-
-            if (rt) {
-                rt = rt.substring(0, 3).padStart(3, '0');
-                rw = rw ? rw.substring(0, 3).padStart(3, '0') : '001';
-                this.value = rt + '/' + rw;
-            } else {
-                this.value = '';
-            }
-        });
-
 
         // Konfirmasi sebelum submit
         document.getElementById('formMandiri').addEventListener('submit', function(e) {
@@ -1229,26 +1201,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_mandiri'])) {
                 }
             });
         }
-        // Handle jenis usaha "Lainnya"
-        const jenis_usaha_select = document.getElementById('jenis_usaha');
-        const jenis_usaha_lainnya_field = document.getElementById('jenis_usaha_lainnya_field');
-        const jenis_usaha_lainnya_input = document.getElementById('jenis_usaha_lainnya');
 
-        jenis_usaha_select.addEventListener('change', function() {
-            if (this.value === 'lainnya') {
-                jenis_usaha_lainnya_field.style.display = 'block';
-                jenis_usaha_lainnya_input.required = true;
+        // RT/RW FORMATTING
+        const rtRwInput = document.getElementById('rt_rw_usaha');
+        Inputmask("999/999", {
+            placeholder: "___/___",
+            clearMaskOnLostFocus: false
+        }).mask(rtRwInput);
+
+        document.getElementById('rt_rw_usaha').addEventListener('blur', function() {
+            let value = this.value.trim();
+            if (!value) return;
+
+            let parts = value.split('/');
+            let rt = parts[0] ? parts[0].replace(/\D/g, '') : '';
+            let rw = parts[1] ? parts[1].replace(/\D/g, '') : '';
+
+            if (rt) {
+                rt = rt.substring(0, 3).padStart(3, '0');
+                rw = rw ? rw.substring(0, 3).padStart(3, '0') : '001';
+                this.value = rt + '/' + rw;
             } else {
-                jenis_usaha_lainnya_field.style.display = 'none';
-                jenis_usaha_lainnya_input.required = false;
-                jenis_usaha_lainnya_input.value = '';
+                this.value = '';
             }
         });
-
-        // Check on page load if "Lainnya" is already selected
-        if (jenis_usaha_select.value === 'lainnya') {
-            jenis_usaha_lainnya_field.style.display = 'block';
-        }
     </script>
 </body>
 
