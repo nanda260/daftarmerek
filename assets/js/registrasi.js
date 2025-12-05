@@ -301,7 +301,7 @@ function updateFileName() {
     fileName.style.fontWeight = '500';
     
     const fileSizeKB = (file.size / 1024).toFixed(0);
-    fileSizeInfo.textContent = `✓ File valid (${fileSizeKB} KB)`;
+    fileSizeInfo.textContent = `${fileSizeKB} KB`;
 
     previewWrapper.classList.add('show');
 

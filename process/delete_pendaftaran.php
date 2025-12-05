@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config_db.php';
+require_once 'crypto_helper.php';
 
 // Cek apakah user adalah admin
 if (!isset($_SESSION['NIK_NIP']) || $_SESSION['role'] != 'Admin') {
@@ -9,14 +10,24 @@ if (!isset($_SESSION['NIK_NIP']) || $_SESSION['role'] != 'Admin') {
     exit;
 }
 
-// Cek apakah ada ID pendaftaran
-if (!isset($_GET['id']) || empty($_GET['id'])) {
+// Cek apakah ada token
+if (!isset($_GET['token']) || empty($_GET['token'])) {
     $_SESSION['error_message'] = 'ID pendaftaran tidak valid';
     header("Location: ../dashboard-admin.php");
     exit;
 }
 
-$id_pendaftaran = intval($_GET['id']);
+// Decrypt token menjadi ID
+$encrypted_token = $_GET['token'];
+$decrypted_id = decryptId($encrypted_token);
+
+if ($decrypted_id === false) {
+    $_SESSION['error_message'] = 'Token tidak valid atau sudah kadaluarsa';
+    header("Location: ../dashboard-admin.php");
+    exit;
+}
+
+$id_pendaftaran = intval($decrypted_id);
 
 try {
     // Mulai transaction

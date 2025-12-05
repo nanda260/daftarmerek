@@ -32,56 +32,9 @@ if (!$user) {
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/registrasi.css">
     <link rel="icon" href="assets/img/logo.png" type="image/png">
-    <style>
-        .preview-container {
-            margin-top: 10px;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            display: none;
-        }
-        .preview-container.show {
-            display: block;
-        }
-        .preview-image {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .preview-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .btn-remove-preview {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .btn-remove-preview:hover {
-            background: #c82333;
-        }
-        .btn-primary {
-            background-color: #0d6efd;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 4px;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-primary:hover {
-            background-color: #0b5ed7;
-        }
-    </style>
 </head>
 
 <body>
@@ -95,13 +48,14 @@ if (!$user) {
             <form id="editProfilForm" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="namaPemilik" class="form-label">Nama Pemilik</label>
-                    <input type="text" name="namaPemilik" class="form-control" id="namaPemilik" value="<?= htmlspecialchars($user['nama_lengkap']); ?>" required>
+                    <input type="text" name="namaPemilik" class="form-control" id="namaPemilik" value="<?= htmlspecialchars($user['nama_lengkap']); ?>" readonly>
+                    <small class="text-muted">Nama tidak dapat diubah</small>
                 </div>
 
                 <div class="mb-3">
                     <label for="nik" class="form-label">NIK</label>
-                    <input type="text" name="NIK_NIP" class="form-control" id="nik" value="<?= htmlspecialchars($user['NIK_NIP']); ?>" maxlength="16" required>
-                    <small class="text-muted">16 digit NIK</small>
+                    <input type="text" name="NIK_NIP" class="form-control" id="nik" value="<?= htmlspecialchars($user['NIK_NIP']); ?>" maxlength="16" readonly>
+                    <small class="text-muted">NIK tidak dapat diubah</small>
                 </div>
 
                 <div class="mb-3">
@@ -139,17 +93,17 @@ if (!$user) {
                     <div class="row">
                         <div class="col-md-6">
                             <label for="rt_rw" class="form-label">RT/RW</label>
-                            <input type="text" class="form-control" name="rt_rw" id="rt_rw" placeholder="Contoh: 002/006" value="<?= htmlspecialchars($user['rt_rw']); ?>" maxlength="7" required>
-                            <small class="text-muted d-block mt-1">Format otomatis: 002/006</small>
+                            <input type="text" class="form-control" id="rt_rw" name="rt_rw" placeholder="Contoh: 002/006" maxlength="7" value="<?= htmlspecialchars($user['rt_rw']); ?>" required>
+                            <small class="text-muted d-block mt-1">Contoh Format: 002/006</small>
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-3">
-    <label for="telepon" class="form-label">Nomor WhatsApp</label>
-    <input type="tel" class="form-control" name="telepon" id="telepon" value="<?= htmlspecialchars($user['no_wa']); ?>" required>
-    <small class="text-muted">Contoh: 6281234567890 (digunakan untuk login)</small>
-</div>
+                    <label for="telepon" class="form-label">Nomor WhatsApp</label>
+                    <input type="tel" class="form-control" name="telepon" id="telepon" value="<?= htmlspecialchars($user['no_wa']); ?>" required>
+                    <small class="text-muted">Contoh: 6281234567890 (digunakan untuk login)</small>
+                </div>
 
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
@@ -157,43 +111,83 @@ if (!$user) {
                 </div>
 
                 <div class="mb-3">
-                    <label for="fileKTP" class="form-label">Upload KTP (opsional)</label>
-                    <input type="file" id="fileKTP" name="fileKTP" accept=".pdf,.jpg,.jpeg,.png" class="form-control">
-                    
-                    <!-- Preview KTP Saat Ini -->
-                    <?php if (!empty($user['foto_ktp'])): ?>
-                        <div id="currentKtpPreview" class="preview-container show" style="display: block;">
-                            <div class="preview-header">
-                                <strong>KTP Saat Ini:</strong>
-                                <a href="<?= htmlspecialchars($user['foto_ktp']); ?>" target="_blank" class="btn btn-sm btn-primary">Buka di Tab Baru</a>
-                            </div>
-                            <?php 
-                            $file_extension = strtolower(pathinfo($user['foto_ktp'], PATHINFO_EXTENSION));
-                            if (in_array($file_extension, ['jpg', 'jpeg', 'png', 'gif'])): 
-                            ?>
-                                <img src="<?= htmlspecialchars($user['foto_ktp']); ?>" alt="KTP Saat Ini" class="preview-image">
-                            <?php else: ?>
-                                <div class="text-center p-3">
-                                    <i class="bi bi-file-earmark-pdf" style="font-size: 48px;"></i>
-                                    <p class="mb-0 mt-2"><strong>File PDF:</strong> <?= basename($user['foto_ktp']); ?></p>
-                                    <small class="text-muted">Klik "Buka di Tab Baru" untuk melihat file</small>
-                                </div>
-                            <?php endif; ?>
+                    <label class="form-label">File KTP</label>
+                    <div class="file-upload-container">
+                        <div class="file-input-wrapper">
+                            <input type="file" id="fileKTP" name="fileKTP" accept=".pdf,.jpg,.jpeg,.png" onchange="updateFileName()">
+                            <label for="fileKTP" class="file-upload-label">Pilih File Baru</label>
+                            <span id="fileName" class="file-name">Tidak ada file yang dipilih.</span>
                         </div>
-                    <?php endif; ?>
 
-                    <!-- Preview Container untuk KTP Baru -->
-                    <div id="previewContainer" class="preview-container">
-                        <div class="preview-header">
-                            <strong>Preview KTP Baru:</strong>
-                            <button type="button" class="btn-remove-preview" onclick="removePreview()">Hapus</button>
-                        </div>
-                        <img id="previewImage" src="" alt="Preview KTP" class="preview-image">
-                        <div id="pdfPreview" style="display:none;">
-                            <p class="mb-0"><strong>File PDF:</strong> <span id="pdfFileName"></span></p>
-                            <small class="text-muted">Preview PDF tidak tersedia. File akan diupload saat Anda menyimpan.</small>
+                        <!-- Preview KTP Saat Ini -->
+                        <?php if (!empty($user['foto_ktp'])): ?>
+                            <div id="currentKtpPreview" class="ktp-preview-wrapper show">
+                                <div class="mb-2">
+                                    <strong style="color: #161616;">KTP Saat Ini:</strong>
+                                </div>
+                                <?php
+                                $file_extension = strtolower(pathinfo($user['foto_ktp'], PATHINFO_EXTENSION));
+                                if (in_array($file_extension, ['jpg', 'jpeg', 'png', 'gif'])):
+                                ?>
+                                    <div class="preview-image-container">
+                                        <img src="<?= htmlspecialchars($user['foto_ktp']); ?>" alt="KTP Saat Ini" class="ktp-preview-img show">
+                                        <div class="preview-blur-overlay">
+                                            <i class="bi bi-lock-fill"></i> Data Pribadi Disamarkan
+                                        </div>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="pdf-preview-box show">
+                                        <div class="pdf-icon"><i class="bi bi-file-pdf-fill"></i></div>
+                                        <p class="mb-0"><strong><?= basename($user['foto_ktp']); ?></strong></p>
+                                        <small class="text-muted">File PDF tersimpan</small>
+                                    </div>
+                                <?php endif; ?>
+
+                                <div class="preview-actions">
+                                    <a href="<?= htmlspecialchars($user['foto_ktp']); ?>" target="_blank" class="btn btn-sm" style="background: #0d6efd; color: white; text-decoration: none; padding: 6px 16px; border-radius: 6px; font-size: 14px;">
+                                        <i class="bi bi-box-arrow-up-right"></i> Buka File
+                                    </a>
+                                </div>
+
+                                <div class="security-badge">
+                                    <i class="bi bi-shield-fill-check"></i>
+                                    Data pribadi Anda dilindungi dengan enkripsi
+                                </div>
+
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Preview KTP -->
+                        <div id="ktpPreviewContainer" class="ktp-preview-wrapper">
+                            <div class="mb-2">
+                                <strong style="color: #161616;">Preview KTP Baru:</strong>
+                            </div>
+
+                            <div class="preview-image-container">
+                                <img id="ktpPreviewImg" class="ktp-preview-img" alt="Preview KTP">
+                                <div class="preview-blur-overlay">
+                                    <i class="bi bi-lock-fill"></i> Data Pribadi Disamarkan
+                                </div>
+                            </div>
+
+                            <div id="pdfPreviewBox" class="pdf-preview-box">
+                                <div class="pdf-icon"><i class="bi bi-file-pdf-fill"></i></div>
+                                <p class="mb-0"><strong id="pdfFileName"></strong></p>
+                                <small class="text-muted">File PDF siap diupload</small>
+                            </div>
+
+                            <div class="preview-actions">
+                                <span class="file-size-info" id="fileSizeInfo"></span>
+                                <button type="button" class="btn-remove-file" onclick="clearFilePreview()">Hapus File</button>
+                            </div>
+
+                            <div class="security-badge">
+                                <i class="bi bi-shield-fill-check"></i>
+                                Data pribadi Anda dilindungi dengan enkripsi
+                            </div>
                         </div>
                     </div>
+                    <div class="file-info">Upload file baru untuk mengganti KTP (Opsional). Maks 1 MB</div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2 mt-4">
@@ -224,6 +218,8 @@ if (!$user) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/inputmask.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/inputmask.min.js"></script>
     <script src="assets/js/edit-profil.js"></script>
 </body>
 

@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
   <link rel="stylesheet" href="assets/css/registrasi.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="icon" href="assets/img/logo.png" type="image/png">
 </head>
 
@@ -95,10 +96,14 @@
             </div>
             
             <div id="ktpPreviewContainer" class="ktp-preview-wrapper">
-              <img id="ktpPreviewImg" class="ktp-preview-img" alt="Preview KTP">
-              
+           <div class="preview-image-container">
+             <img id="ktpPreviewImg" class="ktp-preview-img" alt="Preview KTP">
+             <div class="preview-blur-overlay">
+               <i class="bi bi-lock-fill"></i> Data Pribadi Disamarkan
+             </div>
+           </div>              
               <div id="pdfPreviewBox" class="pdf-preview-box">
-                <div class="pdf-icon">📄</div>
+                <div class="pdf-icon"><i class="bi bi-file-pdf-fill"></i></div>
                 <p class="mb-0"><strong id="pdfFileName"></strong></p>
                 <small class="text-muted">File PDF siap diupload</small>
               </div>
@@ -107,6 +112,12 @@
                 <span class="file-size-info" id="fileSizeInfo"></span>
                 <button type="button" class="btn-remove-file" onclick="clearFilePreview()">Hapus File</button>
               </div>
+           
+           <div class="security-badge">
+            <i class="bi bi-shield-fill-check"></i>
+             Data pribadi Anda dilindungi dengan enkripsi
+           </div>
+
             </div>
           </div>
           <div class="file-info">Upload 1 file (PDF atau gambar). Maks 1 MB</div>

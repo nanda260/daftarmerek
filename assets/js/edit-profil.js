@@ -395,17 +395,11 @@ document.getElementById('telepon').addEventListener('input', function() {
 });
 
 // Format RT/RW
-document.getElementById('rt_rw').addEventListener('input', function(e) {
-  let value = this.value;
-  value = value.replace(/[^\d\/]/g, '');
-  
-  const slashCount = (value.match(/\//g) || []).length;
-  if (slashCount > 1) {
-    value = value.substring(0, value.lastIndexOf('/'));
-  }
-  
-  this.value = value;
-});
+   const rtRwInput = document.getElementById('rt_rw');
+   Inputmask("999/999", {
+     placeholder: "___/___",
+     clearMaskOnLostFocus: false
+   }).mask(rtRwInput);
 
 // Auto format RT/RW on blur
 document.getElementById('rt_rw').addEventListener('blur', function() {
@@ -433,58 +427,88 @@ document.getElementById('rt_rw').addEventListener('blur', function() {
 // FILE UPLOAD PREVIEW
 // ============================================
 
-document.getElementById('fileKTP').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  const previewContainer = document.getElementById('previewContainer');
+ function updateFileName() {
+   const fileInput = document.getElementById('fileKTP');
+   const fileName = document.getElementById('fileName');
+   const previewWrapper = document.getElementById('ktpPreviewContainer');
+   const previewImg = document.getElementById('ktpPreviewImg');
+   const pdfPreviewBox = document.getElementById('pdfPreviewBox');
+   const pdfFileName = document.getElementById('pdfFileName');
+   const fileSizeInfo = document.getElementById('fileSizeInfo');
+   const currentKtpPreview = document.getElementById('currentKtpPreview');
+ 
+   if (fileInput.files.length > 0) {
+     const file = fileInput.files[0];
+ 
+     // Validasi ukuran file
+     if (file.size > 1024 * 1024) {
+       showAlert(`File terlalu besar (${(file.size / 1024 / 1024).toFixed(2)} MB). Maksimal 1 MB.`, 'warning');
+       clearFilePreview();
+       return;
+     }
+ 
+     // Validasi tipe file
+     const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+     if (!allowedTypes.includes(file.type)) {
+       showAlert('Format file harus PDF, JPG, JPEG, atau PNG.', 'warning');
+       clearFilePreview();
+       return;
+     }
+ 
+     // Sembunyikan preview KTP lama
+     if (currentKtpPreview) {
+       currentKtpPreview.style.display = 'none';
+     }
+ 
+     // Update nama file dan ukuran
+     fileName.textContent = file.name;
+     fileName.style.color = '#28a745';
+     fileName.style.fontWeight = '500';
+     
+     const fileSizeKB = (file.size / 1024).toFixed(0);
+     fileSizeInfo.textContent = `${fileSizeKB} KB`;
+ 
+     previewWrapper.classList.add('show');
+ 
+     if (file.type === 'application/pdf') {
+       previewImg.classList.remove('show');
+       pdfPreviewBox.classList.add('show');
+       pdfFileName.textContent = file.name;
+     } else {
+       pdfPreviewBox.classList.remove('show');
+       previewImg.classList.add('show');
+ 
+       const reader = new FileReader();
+       reader.onload = function(e) {
+         previewImg.src = e.target.result;
+       };
+       reader.readAsDataURL(file);
+     }
+   } else {
+     clearFilePreview();
+   }
+ }
+
+ function clearFilePreview() {
+   const fileInput = document.getElementById('fileKTP');
+   const fileName = document.getElementById('fileName');
+   const previewWrapper = document.getElementById('ktpPreviewContainer');
+   const previewImg = document.getElementById('ktpPreviewImg');
+   const pdfPreviewBox = document.getElementById('pdfPreviewBox');
+   const fileSizeInfo = document.getElementById('fileSizeInfo');
   const currentKtpPreview = document.getElementById('currentKtpPreview');
-  const previewImage = document.getElementById('previewImage');
-  const pdfPreview = document.getElementById('pdfPreview');
-  const pdfFileName = document.getElementById('pdfFileName');
 
-  if (file) {
-    // Validasi ukuran
-    if (file.size > 1024 * 1024) {
-showAlert('File terlalu besar. Maksimal 1 MB.', 'warning');
-      e.target.value = '';
-      previewContainer.classList.remove('show');
-      return;
-    }
+   fileInput.value = '';
+   fileName.textContent = 'Tidak ada file yang dipilih.';
+   fileName.style.color = '#666';
+   fileName.style.fontWeight = 'normal';
+   
+   previewImg.src = '';
+   previewImg.classList.remove('show');
+   pdfPreviewBox.classList.remove('show');
+   previewWrapper.classList.remove('show');
+   fileSizeInfo.textContent = '';
 
-    // Sembunyikan preview KTP lama
-    if (currentKtpPreview) {
-      currentKtpPreview.style.display = 'none';
-    }
-
-    const fileType = file.type;
-
-    if (fileType.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        previewImage.src = event.target.result;
-        previewImage.style.display = 'block';
-        pdfPreview.style.display = 'none';
-        previewContainer.classList.add('show');
-      };
-      reader.readAsDataURL(file);
-    } else if (fileType === 'application/pdf') {
-      pdfFileName.textContent = file.name;
-      previewImage.style.display = 'none';
-      pdfPreview.style.display = 'block';
-      previewContainer.classList.add('show');
-    }
-  } else {
-    previewContainer.classList.remove('show');
-    if (currentKtpPreview) {
-      currentKtpPreview.style.display = 'block';
-    }
-  }
-});
-
-function removePreview() {
-  const currentKtpPreview = document.getElementById('currentKtpPreview');
-  document.getElementById('fileKTP').value = '';
-  document.getElementById('previewContainer').classList.remove('show');
-  
   if (currentKtpPreview) {
     currentKtpPreview.style.display = 'block';
   }

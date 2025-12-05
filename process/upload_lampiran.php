@@ -13,7 +13,7 @@ if (!isset($_SESSION['NIK_NIP']) || $_SESSION['role'] != 'Admin') {
 // Cek method POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'message' => 'Method tidak valid. Gunakan POST method.',
         'error_type' => 'invalid_method'
     ]);
@@ -23,11 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Ambil data dari request
 $id_pendaftaran = isset($_POST['id_pendaftaran']) ? intval($_POST['id_pendaftaran']) : 0;
 $id_jenis_file = isset($_POST['id_jenis_file']) ? intval($_POST['id_jenis_file']) : 0;
+$tanggal_terbit = isset($_POST['tanggal_terbit']) ? $_POST['tanggal_terbit'] : null;
 
 // Validasi input
 if ($id_pendaftaran <= 0) {
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'message' => 'ID Pendaftaran tidak valid atau kosong.',
         'error_type' => 'validation_error',
         'field' => 'id_pendaftaran',
@@ -38,7 +39,7 @@ if ($id_pendaftaran <= 0) {
 
 if ($id_jenis_file <= 0) {
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'message' => 'Jenis file tidak valid atau belum dipilih.',
         'error_type' => 'validation_error',
         'field' => 'id_jenis_file',
@@ -50,7 +51,7 @@ if ($id_jenis_file <= 0) {
 // Cek apakah file di-upload
 if (!isset($_FILES['file'])) {
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'message' => 'File tidak ditemukan dalam request. Pastikan field upload bernama "file".',
         'error_type' => 'file_not_found'
     ]);
@@ -67,9 +68,9 @@ if ($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
         UPLOAD_ERR_CANT_WRITE => 'Gagal menulis file ke disk',
         UPLOAD_ERR_EXTENSION => 'Upload dihentikan oleh ekstensi PHP'
     ];
-    
+
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'message' => 'Upload gagal: ' . ($error_messages[$_FILES['file']['error']] ?? 'Error tidak diketahui'),
         'error_type' => 'upload_error',
         'error_code' => $_FILES['file']['error']
@@ -84,7 +85,7 @@ $allowed_extensions = ['jpg', 'jpeg', 'png', 'pdf'];
 // Validasi ekstensi file
 if (!in_array($file_extension, $allowed_extensions)) {
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'message' => 'Format file tidak diizinkan.',
         'error_type' => 'invalid_extension',
         'detail' => [
@@ -100,7 +101,7 @@ if (!in_array($file_extension, $allowed_extensions)) {
 $max_size = 10 * 1024 * 1024;
 if ($file['size'] > $max_size) {
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'message' => 'Ukuran file terlalu besar.',
         'error_type' => 'file_too_large',
         'detail' => [
@@ -112,11 +113,48 @@ if ($file['size'] > $max_size) {
     exit;
 }
 
+// Validasi tanggal_terbit khusus untuk Sertifikat (id_jenis_file = 7)
+if ($id_jenis_file == 7) {
+    if (empty($tanggal_terbit)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Tanggal penerimaan sertifikat wajib diisi.',
+            'error_type' => 'validation_error',
+            'field' => 'tanggal_terbit'
+        ]);
+        exit;
+    }
+
+    // Validasi format tanggal
+    $date = DateTime::createFromFormat('Y-m-d', $tanggal_terbit);
+    if (!$date || $date->format('Y-m-d') !== $tanggal_terbit) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Format tanggal tidak valid. Gunakan format YYYY-MM-DD.',
+            'error_type' => 'validation_error',
+            'field' => 'tanggal_terbit',
+            'received_value' => $tanggal_terbit
+        ]);
+        exit;
+    }
+
+    // Validasi tanggal tidak boleh masa depan
+    if ($date > new DateTime()) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Tanggal penerimaan sertifikat tidak boleh di masa depan.',
+            'error_type' => 'validation_error',
+            'field' => 'tanggal_terbit'
+        ]);
+        exit;
+    }
+}
+
 try {
     // folder upload berdasarkan jenis file
     $physical_folder = "../uploads/lampiran/";
     $db_folder = "uploads/lampiran/";
-    
+
     switch ($id_jenis_file) {
         case 4: // Surat Keterangan Difasilitasi
             $physical_folder = "../uploads/berkasfasilitasi/";
@@ -143,12 +181,12 @@ try {
             $db_folder = "uploads/lampiran/";
             break;
     }
-    
+
     // Buat folder jika belum ada
     if (!file_exists($physical_folder)) {
         if (!mkdir($physical_folder, 0777, true)) {
             echo json_encode([
-                'success' => false, 
+                'success' => false,
                 'message' => 'Gagal membuat direktori upload.',
                 'error_type' => 'directory_creation_failed',
                 'folder' => $physical_folder
@@ -156,25 +194,25 @@ try {
             exit;
         }
     }
-    
+
     // Cek permission folder
     if (!is_writable($physical_folder)) {
         echo json_encode([
-            'success' => false, 
+            'success' => false,
             'message' => 'Direktori upload tidak memiliki permission untuk menulis.',
             'error_type' => 'permission_denied',
             'folder' => $physical_folder
         ]);
         exit;
     }
-    
+
     // Generate nama file
     // Ambil NIK dari pendaftaran untuk nama file
     $stmt_nik = $pdo->prepare("SELECT NIK FROM pendaftaran WHERE id_pendaftaran = ?");
     $stmt_nik->execute([$id_pendaftaran]);
     $nik_data = $stmt_nik->fetch(PDO::FETCH_ASSOC);
     $nik = $nik_data['NIK'] ?? time();
-    
+
     // Generate nama file berdasarkan jenis
     if ($id_jenis_file == 7) {
         // Sertifikat Terbit
@@ -186,49 +224,55 @@ try {
         // File lainnya tetap pakai timestamp
         $filename = time() . "_" . uniqid() . "." . $file_extension;
     }
-    
+
     $physical_target = $physical_folder . $filename;
-    
+
     // simpan di database (tanpa ../)
     $db_target = $db_folder . $filename;
-    
+
     if (move_uploaded_file($file['tmp_name'], $physical_target)) {
         $tgl_upload = date('Y-m-d H:i:s');
-        
+
         $pdo->beginTransaction();
-        
+
         try {
             $stmt = $pdo->prepare("SELECT file_path FROM lampiran WHERE id_pendaftaran = ? AND id_jenis_file = ?");
             $stmt->execute([$id_pendaftaran, $id_jenis_file]);
             $old_file = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             if ($old_file && $old_file['file_path']) {
-                $old_physical_path = (strpos($old_file['file_path'], '../') === 0) 
-                    ? $old_file['file_path'] 
+                $old_physical_path = (strpos($old_file['file_path'], '../') === 0)
+                    ? $old_file['file_path']
                     : '../' . $old_file['file_path'];
-                
+
                 if (file_exists($old_physical_path)) {
                     unlink($old_physical_path);
                 }
             }
-            
+
             // Hapus record lama
             $stmt = $pdo->prepare("DELETE FROM lampiran WHERE id_pendaftaran = ? AND id_jenis_file = ?");
             $stmt->execute([$id_pendaftaran, $id_jenis_file]);
-            
-            $stmt = $pdo->prepare("INSERT INTO lampiran (id_pendaftaran, id_jenis_file, tgl_upload, file_path) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$id_pendaftaran, $id_jenis_file, $tgl_upload, $db_target]);
-            
+
+            // Insert dengan tanggal_terbit untuk sertifikat
+            if ($id_jenis_file == 7 && $tanggal_terbit) {
+                $stmt = $pdo->prepare("INSERT INTO lampiran (id_pendaftaran, id_jenis_file, tgl_upload, tanggal_terbit, file_path) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([$id_pendaftaran, $id_jenis_file, $tgl_upload, $tanggal_terbit, $db_target]);
+            } else {
+                $stmt = $pdo->prepare("INSERT INTO lampiran (id_pendaftaran, id_jenis_file, tgl_upload, file_path) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$id_pendaftaran, $id_jenis_file, $tgl_upload, $db_target]);
+            }
+
             $stmt_user = $pdo->prepare("SELECT p.NIK, u.email, u.nama_lengkap, u.no_wa FROM pendaftaran p INNER JOIN user u ON p.NIK = u.NIK_NIP WHERE p.id_pendaftaran = ?");
             $stmt_user->execute([$id_pendaftaran]);
             $user_data = $stmt_user->fetch(PDO::FETCH_ASSOC);
-            
+
             $notif_result = null;
-            
+
             // Update status dan kirim notifikasi berdasarkan jenis file
             switch ($id_jenis_file) {
                 case 4: // Surat Keterangan Difasilitasi
-                    
+
                     if ($user_data) {
                         $deskripsi = NotificationTemplates::suratKeteranganTersedia();
                         $notif_result = sendNotification(
@@ -238,12 +282,12 @@ try {
                             $deskripsi,
                             $user_data['no_wa']
                         );
-                        
+
                         error_log("Notifikasi Surat Keterangan - DB: " . ($notif_result['db'] ? 'SUCCESS' : 'FAILED'));
                         error_log("Notifikasi Surat Keterangan - WA: " . json_encode($notif_result['wa']));
                     }
                     break;
-                    
+
                 case 5: // Surat IKM
                     if ($user_data) {
                         $deskripsi = NotificationTemplates::suratIKMTersedia();
@@ -254,12 +298,12 @@ try {
                             $deskripsi,
                             $user_data['no_wa']
                         );
-                        
+
                         error_log("Notifikasi Surat IKM - DB: " . ($notif_result['db'] ? 'SUCCESS' : 'FAILED'));
                         error_log("Notifikasi Surat IKM - WA: " . json_encode($notif_result['wa']));
                     }
                     break;
-                    
+
                 case 6: // Bukti Pendaftaran Kementerian
                     if ($user_data) {
                         $deskripsi = NotificationTemplates::buktiPendaftaranTersedia();
@@ -270,19 +314,19 @@ try {
                             $deskripsi,
                             $user_data['no_wa']
                         );
-                        
+
                         error_log("Notifikasi Bukti Pendaftaran - DB: " . ($notif_result['db'] ? 'SUCCESS' : 'FAILED'));
                         error_log("Notifikasi Bukti Pendaftaran - WA: " . json_encode($notif_result['wa']));
                     }
                     break;
-                    
+
                 case 7: // Sertifikat Terbit (DITERIMA)
                     // Update status ke "Hasil Verifikasi Kementerian"
                     $stmt = $pdo->prepare("UPDATE pendaftaran SET status_validasi = 'Hasil Verifikasi Kementerian' WHERE id_pendaftaran = ?");
                     $stmt->execute([$id_pendaftaran]);
-                    
+
                     $pdo->commit();
-                    
+
                     if ($user_data) {
                         $deskripsi = NotificationTemplates::sertifikatTerbit();
                         $notif_result = sendNotification(
@@ -292,33 +336,34 @@ try {
                             $deskripsi,
                             $user_data['no_wa']
                         );
-                        
+
                         error_log("Notifikasi Sertifikat - DB: " . ($notif_result['db'] ? 'SUCCESS' : 'FAILED'));
                         error_log("Notifikasi Sertifikat - WA: " . json_encode($notif_result['wa']));
                     }
-                    
+
                     // Return response untuk sertifikat
                     echo json_encode([
-                        'success' => true, 
+                        'success' => true,
                         'message' => 'Sertifikat berhasil diupload!',
                         'data' => [
                             'file_path' => $db_target,
                             'file_name' => $filename,
                             'file_size' => round($file['size'] / 1024, 2) . ' KB',
                             'upload_time' => $tgl_upload,
-                            'id_jenis_file' => $id_jenis_file
+                            'id_jenis_file' => $id_jenis_file,
+                            'tanggal_terbit' => $tanggal_terbit
                         ],
                         'notif_sent' => $notif_result
                     ]);
-                    exit; 
-                    
+                    exit;
+
                 case 8: // Surat Penolakan Kementerian (DITOLAK)
                     // Update status ke "Hasil Verifikasi Kementerian"
                     $stmt = $pdo->prepare("UPDATE pendaftaran SET status_validasi = 'Hasil Verifikasi Kementerian' WHERE id_pendaftaran = ?");
                     $stmt->execute([$id_pendaftaran]);
-                    
+
                     $pdo->commit();
-                    
+
                     if ($user_data) {
                         $deskripsi = NotificationTemplates::suratPenolakan();
                         $notif_result = sendNotification(
@@ -328,14 +373,14 @@ try {
                             $deskripsi,
                             $user_data['no_wa']
                         );
-                        
+
                         error_log("Notifikasi Surat Penolakan - DB: " . ($notif_result['db'] ? 'SUCCESS' : 'FAILED'));
                         error_log("Notifikasi Surat Penolakan - WA: " . json_encode($notif_result['wa']));
                     }
-                    
+
                     // Return response untuk surat penolakan
                     echo json_encode([
-                        'success' => true, 
+                        'success' => true,
                         'message' => 'Surat Penolakan berhasil diupload!',
                         'data' => [
                             'file_path' => $db_target,
@@ -348,11 +393,11 @@ try {
                     ]);
                     exit;
             }
-            
+
             $pdo->commit();
-            
+
             echo json_encode([
-                'success' => true, 
+                'success' => true,
                 'message' => 'File berhasil diupload!',
                 'data' => [
                     'file_path' => $db_target,
@@ -363,20 +408,18 @@ try {
                 ],
                 'notif_sent' => $notif_result
             ]);
-            
         } catch (PDOException $e) {
             $pdo->rollBack();
-            
+
             if (file_exists($physical_target)) {
                 unlink($physical_target);
             }
-            
+
             throw $e;
         }
-        
     } else {
         echo json_encode([
-            'success' => false, 
+            'success' => false,
             'message' => 'Gagal memindahkan file dari temporary ke folder tujuan.',
             'error_type' => 'move_upload_failed',
             'detail' => [
@@ -386,21 +429,20 @@ try {
             ]
         ]);
     }
-    
 } catch (PDOException $e) {
     // Rollback jika terjadi error
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    
+
     // Hapus file yang sudah di-upload jika ada error database
     if (isset($physical_target) && file_exists($physical_target)) {
         unlink($physical_target);
     }
-    
+
     error_log("Error upload lampiran: " . $e->getMessage());
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'message' => 'Terjadi kesalahan database.',
         'error_type' => 'database_error',
         'detail' => [
@@ -412,7 +454,7 @@ try {
 } catch (Exception $e) {
     error_log("Error upload lampiran: " . $e->getMessage());
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'message' => 'Terjadi kesalahan sistem.',
         'error_type' => 'system_error',
         'detail' => [
@@ -420,4 +462,3 @@ try {
         ]
     ]);
 }
-?>

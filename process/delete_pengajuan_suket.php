@@ -2,6 +2,7 @@
 session_start();
 
 include 'config_db.php';
+require_once 'crypto_helper.php';
 
 // Cek login admin
 if (!isset($_SESSION['NIK_NIP']) || $_SESSION['role'] != 'Admin') {
@@ -9,13 +10,22 @@ if (!isset($_SESSION['NIK_NIP']) || $_SESSION['role'] != 'Admin') {
     exit;
 }
 
-// Cek apakah ada parameter id
-if (!isset($_GET['id']) || empty($_GET['id'])) {
+// Cek apakah ada parameter token
+if (!isset($_GET['token']) || empty($_GET['token'])) {
     header("Location: ../pengajuan-suket.php");
     exit;
 }
 
-$id_pengajuan = (int)$_GET['id'];
+// Decrypt token menjadi ID
+$encrypted_token = $_GET['token'];
+$decrypted_id = decryptId($encrypted_token);
+
+if ($decrypted_id === false) {
+    header("Location: ../pengajuan-suket.php?delete=invalid_token");
+    exit;
+}
+
+$id_pengajuan = (int)$decrypted_id;
 
 try {
     // Mulai transaksi

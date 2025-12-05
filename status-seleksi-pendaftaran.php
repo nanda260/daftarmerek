@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'process/config_db.php';
+require_once 'process/crypto_helper.php';
 date_default_timezone_set('Asia/Jakarta');
 
 // Cek login
@@ -118,8 +119,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
   }
 }
 
-// AMBIL ID PENDAFTARAN DARI URL
-$id_pendaftaran = isset($_GET['id']) ? intval($_GET['id']) : 0;
+// AMBIL TOKEN DARI URL DAN DECRYPT
+$encrypted_token = isset($_GET['ref']) ? $_GET['ref'] : '';
+$id_pendaftaran = 0;
+
+if (!empty($encrypted_token)) {
+    $decrypted_id = decryptId($encrypted_token);
+    $id_pendaftaran = $decrypted_id !== false ? intval($decrypted_id) : 0;
+}
 
 if (!$id_pendaftaran) {
   header("Location: lihat-pengajuan-fasilitasi.php");
@@ -241,10 +248,12 @@ try {
   $result = $stmt->fetch(PDO::FETCH_ASSOC);
   $buktiPendaftaran = $result ? $result['file_path'] : null;
 
-  $stmt = $pdo->prepare("SELECT file_path FROM lampiran WHERE id_pendaftaran = ? AND id_jenis_file = 7 ORDER BY tgl_upload DESC LIMIT 1");
+ $stmt = $pdo->prepare("SELECT file_path, tgl_upload, tanggal_terbit FROM lampiran WHERE id_pendaftaran = ? AND id_jenis_file = 7 ORDER BY tgl_upload DESC LIMIT 1");
   $stmt->execute([$id_pendaftaran]);
   $result = $stmt->fetch(PDO::FETCH_ASSOC);
   $sertifikatMerek = $result ? $result['file_path'] : null;
+  $tanggalTerbitSertifikat = $result && $result['tanggal_terbit'] ? $result['tanggal_terbit'] : null;
+
 
   $stmt = $pdo->prepare("SELECT file_path FROM lampiran WHERE id_pendaftaran = ? AND id_jenis_file = 8 ORDER BY tgl_upload DESC LIMIT 1");
   $stmt->execute([$id_pendaftaran]);
@@ -341,7 +350,7 @@ try {
                           <h6 class="fw-bold mb-3">Download Surat Kelengkapan</h6>
 
                           <!-- Download surat otomatis dari template -->
-                          <a class="btn btn-dark" href="generate-surat-otomatis.php?id=<?php echo $pendaftaran['id_pendaftaran']; ?>" target="_blank">
+                          <a class="btn btn-dark" href="generate-surat-otomatis.php?ref=<?php echo urlencode(encryptId($pendaftaran['id_pendaftaran'])); ?>" target="_blank">
                             <i class="fa-solid fa-download me-2"></i> Download Surat Kelengkapan Difasilitasi (PDF)
                           </a>
 
@@ -704,12 +713,16 @@ try {
 
                         <?php
                         // Ambil tanggal upload Sertifikat Merek untuk countdown
-                        $stmt = $pdo->prepare("SELECT tgl_upload FROM lampiran WHERE id_pendaftaran = ? AND id_jenis_file = 7 ORDER BY tgl_upload DESC LIMIT 1");
+ $stmt = $pdo->prepare("SELECT tgl_upload, tanggal_terbit FROM lampiran WHERE id_pendaftaran = ? AND id_jenis_file = 7 ORDER BY tgl_upload DESC LIMIT 1");
                         $stmt->execute([$pendaftaran['id_pendaftaran']]);
                         $sertifikat_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                        if ($sertifikat_data && $sertifikat_data['tgl_upload']) {
-                          $tgl_terbit_sertifikat = new DateTime($sertifikat_data['tgl_upload']);
+ // Inisialisasi variabel
+ $bisa_perpanjang = false;
+ $sudah_kadaluarsa = false;
+ 
+ if ($sertifikat_data && !empty($sertifikat_data['tanggal_terbit'])) {
+   $tgl_terbit_sertifikat = new DateTime($sertifikat_data['tanggal_terbit']);
                           $tgl_kadaluarsa = clone $tgl_terbit_sertifikat;
                           $tgl_kadaluarsa->add(new DateInterval('P10Y')); // Tambah 10 tahun
                           $tgl_kadaluarsa->setTime(0, 0, 0); // Set ke jam 00:00:00

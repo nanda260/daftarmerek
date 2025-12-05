@@ -2,10 +2,17 @@
 session_start();
 require_once 'process/config_db.php';
 require_once 'process/notification_helper.php';
+require_once 'process/crypto_helper.php';
 date_default_timezone_set('Asia/Jakarta');
 
 // Ambil ID pengajuan dari URL
-$id_pengajuan = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$encrypted_token = isset($_GET['token']) ? $_GET['token'] : '';
+$id_pengajuan = 0;
+
+if (!empty($encrypted_token)) {
+    $decrypted_id = decryptId($encrypted_token);
+    $id_pengajuan = $decrypted_id !== false ? intval($decrypted_id) : 0;
+}
 
 if ($id_pengajuan == 0) {
     header("Location: pengajuan-suket.php");
@@ -84,14 +91,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
                     error_log("🔔 ID Pengajuan: " . $id_pengajuan);
                     error_log("🔔 File Path: " . $target);
                     error_log("🔔 ========================================");
-                    
+
                     $notif_sent = notifSuratKeteranganIKMSuket($id_pengajuan);
-                    
+
                     error_log("🔔 Notification Result: " . ($notif_sent ? '✅ SUCCESS' : '❌ FAILED'));
                     error_log("🔔 ========================================\n");
-                   
+
                     $pdo->commit();
-                    
+
                     echo json_encode([
                         'success' => true,
                         'message' => 'Surat Keterangan IKM berhasil diupload' . ($notif_sent ? ' dan notifikasi terkirim' : ' (notifikasi gagal terkirim)'),
@@ -101,9 +108,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
                 } catch (PDOException $e) {
                     $pdo->rollBack();
                     if (file_exists($target)) unlink($target);
-                    
+
                     error_log("❌ PDO Error: " . $e->getMessage());
-                    
+
                     throw $e;
                 }
             } else {
@@ -112,19 +119,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
             }
             exit;
         }
-        
+
         // Handler untuk test notifikasi (optional - untuk debugging)
         if ($action === 'test_notification') {
             error_log("\n🧪 ========================================");
             error_log("🧪 TESTING NOTIFICATION SYSTEM");
             error_log("🧪 ID Pengajuan: " . $id_pengajuan);
             error_log("🧪 ========================================");
-            
+
             $result = notifSuratKeteranganIKMSuket($id_pengajuan);
-            
+
             error_log("🧪 Test Result: " . ($result ? '✅ SUCCESS' : '❌ FAILED'));
             error_log("🧪 ========================================\n");
-            
+
             echo json_encode([
                 'success' => $result,
                 'message' => $result ? 'Notifikasi test berhasil dikirim' : 'Notifikasi test gagal'
@@ -167,7 +174,7 @@ try {
     $foto_proses_array = !empty($data['foto_proses']) ? json_decode($data['foto_proses'], true) : [];
     $nib_files_array = !empty($data['nib_file']) ? json_decode($data['nib_file'], true) : [];
 
-    
+
     // Log data untuk debugging
     error_log("\n📋 DATA PENGAJUAN LOADED:");
     error_log("   - ID: " . $id_pengajuan);
@@ -176,7 +183,6 @@ try {
     error_log("   - Email: " . ($data['user_email'] ?? $data['email']));
     error_log("   - No WA: " . ($data['user_no_wa'] ?? $data['no_telp_pemilik']));
     error_log("   - Status: " . $data['status_validasi']);
-    
 } catch (PDOException $e) {
     error_log("❌ Query Error: " . $e->getMessage());
     die("Error: " . $e->getMessage());
@@ -258,7 +264,7 @@ function getDisplayTipe($tipe)
             display: flex;
             gap: 0.5rem;
         }
-        
+
         /* Debug panel untuk development */
         .debug-panel {
             position: fixed;
@@ -269,16 +275,17 @@ function getDisplayTipe($tipe)
             border-radius: 8px;
             padding: 15px;
             max-width: 300px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 9999;
-            display: none; /* Hidden by default, enable for debugging */
+            display: none;
+            /* Hidden by default, enable for debugging */
         }
-        
+
         .debug-panel h6 {
             margin-top: 0;
             color: #007bff;
         }
-        
+
         .debug-panel button {
             margin-top: 10px;
         }
@@ -411,7 +418,7 @@ function getDisplayTipe($tipe)
                                     </small>
                                 </div>
                             </div>
-                            <a href="process/generate_surat_ikm.php?id_pengajuan=<?php echo $id_pengajuan; ?>"
+                            <a href="process/generate_surat_ikm.php?token=<?php echo urlencode(encryptId($id_pengajuan)); ?>"
                                 class="btn btn-primary btn-sm"
                                 download>
                                 <i class="bi bi-download me-2"></i>Download
@@ -595,9 +602,9 @@ function getDisplayTipe($tipe)
                             <div class="mb-3">
                                 <div class="small fw-semibold mb-2">Nomor Induk Berusaha (NIB)</div>
                                 <div class="row g-3">
-                                    <?php 
+                                    <?php
                                     $nib_count = count($nib_files_array);
-                                    foreach ($nib_files_array as $index => $file): 
+                                    foreach ($nib_files_array as $index => $file):
                                         if (!file_exists($file)) continue;
                                         $colClass = $nib_count > 1 ? 'col-md-6' : 'col-12';
                                     ?>
@@ -649,43 +656,43 @@ function getDisplayTipe($tipe)
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">File Akta</label>
                                 <div class="row g-3">
-                                   <div class="col-12">
-                                       <?php
-                                       $file_ext = strtolower(pathinfo($data['akta_file'], PATHINFO_EXTENSION));
-                                       $is_pdf = ($file_ext === 'pdf');
-                                       ?>
+                                    <div class="col-12">
+                                        <?php
+                                        $file_ext = strtolower(pathinfo($data['akta_file'], PATHINFO_EXTENSION));
+                                        $is_pdf = ($file_ext === 'pdf');
+                                        ?>
 
-                                       <?php if ($is_pdf): ?>
-                                           <div class="pdf-card" style="cursor: pointer;"
-                                               onclick="document.querySelector('[data-src=&quot;<?php echo htmlspecialchars($data['akta_file']); ?>&quot;]').click()">
-                                               <i class="bi bi-file-pdf-fill pdf-icon"></i>
-                                               <div class="pdf-label">
-                                                   File Akta (PDF)
-                                               </div>
-                                               <small class="mt-2" style="font-size: 0.75rem; opacity: 0.9;">
-                                                   Klik untuk preview
-                                               </small>
-                                           </div>
-                                       <?php else: ?>
-                                           <img class="attach-img"
-                                               alt="File Akta"
-                                               src="<?php echo htmlspecialchars($data['akta_file']); ?>"
-                                               style="cursor: pointer;"
-                                               onclick="document.querySelector('[data-src=&quot;<?php echo htmlspecialchars($data['akta_file']); ?>&quot;]').click()" />
-                                       <?php endif; ?>
+                                        <?php if ($is_pdf): ?>
+                                            <div class="pdf-card" style="cursor: pointer;"
+                                                onclick="document.querySelector('[data-src=&quot;<?php echo htmlspecialchars($data['akta_file']); ?>&quot;]').click()">
+                                                <i class="bi bi-file-pdf-fill pdf-icon"></i>
+                                                <div class="pdf-label">
+                                                    File Akta (PDF)
+                                                </div>
+                                                <small class="mt-2" style="font-size: 0.75rem; opacity: 0.9;">
+                                                    Klik untuk preview
+                                                </small>
+                                            </div>
+                                        <?php else: ?>
+                                            <img class="attach-img"
+                                                alt="File Akta"
+                                                src="<?php echo htmlspecialchars($data['akta_file']); ?>"
+                                                style="cursor: pointer;"
+                                                onclick="document.querySelector('[data-src=&quot;<?php echo htmlspecialchars($data['akta_file']); ?>&quot;]').click()" />
+                                        <?php endif; ?>
 
-                                       <div class="text-end mt-2 mb-3">
-                                           <button class="btn btn-dark btn-sm btn-view"
-                                               data-src="<?php echo htmlspecialchars($data['akta_file']); ?>"
-                                               data-title="File Akta">
-                                               <i class="bi bi-eye me-1"></i>Preview
-                                           </button>
-                                           <a href="<?php echo htmlspecialchars($data['akta_file']); ?>"
-                                               class="btn btn-outline-dark btn-sm"
-                                               download>
-                                               <i class="bi bi-download me-1"></i>Download
-                                           </a>
-                                       </div>
+                                        <div class="text-end mt-2 mb-3">
+                                            <button class="btn btn-dark btn-sm btn-view"
+                                                data-src="<?php echo htmlspecialchars($data['akta_file']); ?>"
+                                                data-title="File Akta">
+                                                <i class="bi bi-eye me-1"></i>Preview
+                                            </button>
+                                            <a href="<?php echo htmlspecialchars($data['akta_file']); ?>"
+                                                class="btn btn-outline-dark btn-sm"
+                                                download>
+                                                <i class="bi bi-download me-1"></i>Download
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -736,7 +743,7 @@ function getDisplayTipe($tipe)
                                 </div>
                             </div>
                         <?php endif; ?>
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -862,28 +869,28 @@ function getDisplayTipe($tipe)
         if (btnTestNotif) {
             btnTestNotif.addEventListener('click', function() {
                 console.log('🧪 Testing notification for ID:', ID_PENGAJUAN);
-                
+
                 const formData = new FormData();
                 formData.append('ajax_action', 'test_notification');
                 formData.append('id_pengajuan', ID_PENGAJUAN);
 
                 fetch(window.location.href, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('🧪 Test result:', data);
-                    if (data.success) {
-                        showAlert('Test notifikasi berhasil! Cek email dan WhatsApp pemohon.', 'success');
-                    } else {
-                        showAlert('Test notifikasi gagal: ' + data.message, 'danger');
-                    }
-                })
-                .catch(error => {
-                    console.error('🧪 Test error:', error);
-                    showAlert('Terjadi kesalahan saat test notifikasi.', 'danger');
-                });
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('🧪 Test result:', data);
+                        if (data.success) {
+                            showAlert('Test notifikasi berhasil! Cek email dan WhatsApp pemohon.', 'success');
+                        } else {
+                            showAlert('Test notifikasi gagal: ' + data.message, 'danger');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('🧪 Test error:', error);
+                        showAlert('Terjadi kesalahan saat test notifikasi.', 'danger');
+                    });
             });
         }
 
@@ -1005,7 +1012,7 @@ function getDisplayTipe($tipe)
                         })
                         .then(data => {
                             console.log('📥 Response data:', data);
-                            
+
                             if (data.success) {
                                 showAlert(data.message + '\n\nHalaman akan dimuat ulang...', 'success');
                                 setTimeout(() => location.reload(), 2000);
@@ -1089,7 +1096,7 @@ function getDisplayTipe($tipe)
                 if (backdrop) backdrop.style.zIndex = '1050';
             }, 50);
         });
-        
+
         // ============================================
         // CONSOLE LOG INFO
         // ============================================

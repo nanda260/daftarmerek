@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'process/config_db.php';
+require_once 'process/crypto_helper.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
 // Cek login
@@ -11,8 +12,14 @@ if (!isset($_SESSION['NIK_NIP'])) {
 
 $NIK = $_SESSION['NIK_NIP'];
 
-// Ambil id_pendaftaran dari parameter
-$id_pendaftaran = isset($_GET['id']) ? intval($_GET['id']) : 0;
+// Ambil token dari parameter dan decrypt
+$encrypted_token = isset($_GET['ref']) ? $_GET['ref'] : '';
+$id_pendaftaran = 0;
+
+if (!empty($encrypted_token)) {
+    $decrypted_id = decryptId($encrypted_token);
+    $id_pendaftaran = $decrypted_id !== false ? intval($decrypted_id) : 0;
+}
 
 if (!$id_pendaftaran) {
     die("ID Pendaftaran tidak valid");

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config_db.php';
+require_once 'crypto_helper.php';
 require_once '../vendor/autoload.php';
 
 use PhpOffice\PhpWord\PhpWord;
@@ -15,8 +16,14 @@ if (!isset($_SESSION['NIK_NIP']) || $_SESSION['role'] != 'Admin') {
     exit;
 }
 
-// Ambil ID pengajuan
-$id_pengajuan = isset($_GET['id_pengajuan']) ? intval($_GET['id_pengajuan']) : 0;
+// Ambil token dari URL dan decrypt
+$encrypted_token = isset($_GET['token']) ? $_GET['token'] : '';
+$id_pengajuan = 0;
+
+if (!empty($encrypted_token)) {
+    $decrypted_id = decryptId($encrypted_token);
+    $id_pengajuan = $decrypted_id !== false ? intval($decrypted_id) : 0;
+}
 
 if ($id_pengajuan == 0) {
     die("ID Pengajuan tidak valid");

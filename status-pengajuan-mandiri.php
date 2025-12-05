@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'process/config_db.php';
+require_once 'process/crypto_helper.php';
 date_default_timezone_set('Asia/Jakarta');
 
 // Cek login
@@ -12,8 +13,14 @@ if (!isset($_SESSION['NIK_NIP'])) {
 $NIK = $_SESSION['NIK_NIP'];
 $nama = $_SESSION['nama_lengkap'];
 
-// AMBIL ID PENGAJUAN DARI URL
-$id_pengajuan = isset($_GET['id']) ? intval($_GET['id']) : 0;
+// AMBIL TOKEN DARI URL DAN DECRYPT
+$encrypted_token = isset($_GET['ref']) ? $_GET['ref'] : '';
+$id_pengajuan = 0;
+
+if (!empty($encrypted_token)) {
+    $decrypted_id = decryptId($encrypted_token);
+    $id_pengajuan = $decrypted_id !== false ? intval($decrypted_id) : 0;
+}
 
 if (!$id_pengajuan) {
     header("Location: lihat-pengajuan-mandiri.php");

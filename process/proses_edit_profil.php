@@ -21,8 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Ambil data dari POST
-$namaPemilik = trim($_POST['namaPemilik'] ?? '');
-$nik = trim($_POST['NIK_NIP'] ?? '');
 $rt_rw = trim($_POST['rt_rw'] ?? '');
 $provinsi = trim($_POST['provinsi'] ?? '');
 $kabupaten = trim($_POST['kabupaten'] ?? '');
@@ -31,14 +29,25 @@ $kel_desa = trim($_POST['kel_desa'] ?? '');
 $telepon = trim($_POST['telepon'] ?? '');
 $email = trim($_POST['email'] ?? '');
 
-// Validasi field wajib
-if (empty($namaPemilik) || empty($nik) || empty($telepon) || empty($email)) {
-    sendResponse(false, 'Harap lengkapi semua field wajib.');
+// Ambil nama dan NIK dari session/database karena field disabled tidak terkirim
+try {
+    $stmt = $pdo->prepare("SELECT nama_lengkap, NIK_NIP FROM user WHERE NIK_NIP = ?");
+    $stmt->execute([$nik_session]);
+    $current_user = $stmt->fetch();
+
+    if (!$current_user) {
+        sendResponse(false, 'Data user tidak ditemukan.');
+    }
+
+    $namaPemilik = $current_user['nama_lengkap'];
+    $nik = $current_user['NIK_NIP'];
+} catch (PDOException $e) {
+    sendResponse(false, 'Gagal mengambil data user.');
 }
 
-// Validasi NIK
-if (!preg_match('/^\d{16}$/', $nik)) {
-    sendResponse(false, 'Format NIK tidak valid. Harus 16 digit angka.');
+// Validasi field wajib (namaPemilik dan nik sudah pasti ada dari database)
+if (empty($telepon) || empty($email)) {
+    sendResponse(false, 'Harap lengkapi semua field wajib.');
 }
 
 // Validasi RT/RW
@@ -64,22 +73,22 @@ if (empty($provinsi) || empty($kabupaten) || empty($kecamatan) || empty($kel_des
 try {
     // Validasi kode wilayah ada di database
     $stmt = $pdo->prepare("SELECT kode FROM wilayah WHERE kode = ?");
-    
+
     $stmt->execute([$provinsi]);
     if (!$stmt->fetch()) {
         throw new Exception("Kode provinsi tidak valid.");
     }
-    
+
     $stmt->execute([$kabupaten]);
     if (!$stmt->fetch()) {
         throw new Exception("Kode kabupaten tidak valid.");
     }
-    
+
     $stmt->execute([$kecamatan]);
     if (!$stmt->fetch()) {
         throw new Exception("Kode kecamatan tidak valid.");
     }
-    
+
     $stmt->execute([$kel_desa]);
     if (!$stmt->fetch()) {
         throw new Exception("Kode desa tidak valid.");
@@ -87,27 +96,18 @@ try {
 
     // Ambil nama wilayah
     $stmt = $pdo->prepare("SELECT nama FROM wilayah WHERE kode = ?");
-    
+
     $stmt->execute([$provinsi]);
     $nama_provinsi = $stmt->fetchColumn();
-    
+
     $stmt->execute([$kabupaten]);
     $nama_kabupaten = $stmt->fetchColumn();
-    
+
     $stmt->execute([$kecamatan]);
     $nama_kecamatan = $stmt->fetchColumn();
-    
+
     $stmt->execute([$kel_desa]);
     $nama_desa = $stmt->fetchColumn();
-
-    // Cek apakah NIK sudah digunakan user lain (jika NIK berubah)
-    if ($nik !== $nik_session) {
-        $stmt = $pdo->prepare("SELECT NIK_NIP FROM user WHERE NIK_NIP = ? AND NIK_NIP != ?");
-        $stmt->execute([$nik, $nik_session]);
-        if ($stmt->fetch()) {
-            sendResponse(false, 'NIK sudah digunakan oleh user lain.');
-        }
-    }
 
     // Cek apakah email sudah digunakan user lain
     $stmt = $pdo->prepare("SELECT email FROM user WHERE email = ? AND NIK_NIP != ?");
@@ -140,7 +140,7 @@ try {
         }
 
         $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $new_filename = 'ktp_' . $nik . '.' . $ext;
+        $new_filename = 'ktp_' . $nik_session . '_' . time() . '.' . $ext;
         $target_path = $upload_dir . $new_filename;
 
         if (!is_dir($upload_dir)) {
@@ -174,7 +174,7 @@ try {
 
     $params = [
         ':nama_lengkap' => $namaPemilik,
-        ':nik' => $nik,
+        ':nik' => $nik_session,
         ':telepon' => $telepon,
         ':kode_provinsi' => $provinsi,
         ':nama_provinsi' => $nama_provinsi,
@@ -195,43 +195,10 @@ try {
         $params[':foto_ktp'] = $foto_ktp;
     }
 
-    // Ambil data lama user untuk cek perubahan
-    $stmt_check = $pdo->prepare("SELECT nama_lengkap, NIK_NIP FROM user WHERE NIK_NIP = ?");
-    $stmt_check->execute([$nik_session]);
-    $old_data = $stmt_check->fetch();
-
     // Execute update
     $stmt = $pdo->prepare("UPDATE user SET $update_fields WHERE NIK_NIP = :nik_session");
     $stmt->execute($params);
-
-    // Cek apakah Nama atau NIK berubah
-    $nama_berubah = ($namaPemilik !== $old_data['nama_lengkap']);
-    $nik_berubah = ($nik !== $old_data['NIK_NIP']);
-
-    if ($nama_berubah || $nik_berubah) {
-        // Update session NIK jika berubah
-        if ($nik_berubah) {
-            $_SESSION['NIK_NIP'] = $nik;
-        }
-        
-        // Destroy session dan redirect ke logout
-        session_destroy();
-        
-        $pesan = 'Profil berhasil diperbarui. Silakan login kembali karena ';
-        if ($nama_berubah && $nik_berubah) {
-            $pesan .= 'Nama dan NIK berubah.';
-        } elseif ($nama_berubah) {
-            $pesan .= 'Nama berubah.';
-        } else {
-            $pesan .= 'NIK berubah.';
-        }
-        
-        sendResponse(true, $pesan, [
-            'redirect' => 'logout.php'
-        ]);
-    } else {
-        sendResponse(true, 'Profil berhasil diperbarui!');
-    }
+    sendResponse(true, 'Profil berhasil diperbarui!');
     
 } catch (PDOException $e) {
     error_log("Edit profil error: " . $e->getMessage());
@@ -240,4 +207,3 @@ try {
     error_log("Edit profil error: " . $e->getMessage());
     sendResponse(false, $e->getMessage());
 }
-?>

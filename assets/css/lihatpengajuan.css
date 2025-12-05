@@ -258,6 +258,13 @@ main {
   color: #fff !important;
 }
 
+.status-badge.text-bg-warn,
+.badge.text-bg-warn {
+  background-color: #FFC107 !important;
+  color: #fff !important;
+}
+
+
 @media (max-width: 768px) {
     .page-title {
         font-size: 1.5rem;

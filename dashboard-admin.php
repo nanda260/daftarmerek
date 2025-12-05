@@ -5,6 +5,7 @@ session_start();
 date_default_timezone_set('Asia/Jakarta');
 
 include 'process/config_db.php';
+require_once 'process/crypto_helper.php';
 
 // Fungsi format tanggal Indonesia
 function formatTanggalIndonesia($tanggal)
@@ -423,10 +424,10 @@ function getDisplayStatus($status)
                                         <td class="text-nowrap"><?php echo formatTanggalIndonesia($row['tgl_daftar']); ?></td>
                                         <td class="text-center">
                                             <div class="btn-group btn-group-sm">
-                                                <a href="detail-pendaftar.php?id=<?php echo $row['id_pendaftaran']; ?>" class="btn btn-primary btn-icon">
+                                                <a href="detail-pendaftar.php?ref=<?php echo urlencode(encryptId($row['id_pendaftaran'])); ?>" class="btn btn-primary btn-icon">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <button class="btn btn-danger btn-icon" onclick="confirmDelete(<?php echo $row['id_pendaftaran']; ?>)">
+                                                <button class="btn btn-danger btn-icon" onclick="confirmDelete('<?php echo urlencode(encryptId($row['id_pendaftaran'])); ?>')">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </div>
@@ -520,7 +521,7 @@ function getDisplayStatus($status)
         }
 
         // Konfirmasi hapus dengan modal
-        function confirmDelete(id) {
+        function confirmDelete(token) {
             const confirmModal = `
             <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
@@ -549,7 +550,7 @@ function getDisplayStatus($status)
             modal.show();
 
             document.getElementById('confirmDeleteAction').addEventListener('click', function() {
-                window.location.href = 'process/delete_pendaftaran.php?id=' + id;
+                window.location.href = 'process/delete_pendaftaran.php?token=' + encodeURIComponent(token);
             });
 
             document.getElementById('confirmDeleteModal').addEventListener('hidden.bs.modal', function() {

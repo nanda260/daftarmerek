@@ -328,7 +328,11 @@ try {
         <div class="container">
             <div class="welcome-text">Selamat Datang,</div>
             <div class="user-name"><?php echo strtoupper(htmlspecialchars($nama)); ?></div>
-            <div class="user-nik">NIK: <?php echo htmlspecialchars($nik); ?></div>
+            <div class="user-nik">NIK: <?php 
+                // Masking NIK: tampilkan 6 digit pertama dan 2 digit terakhir
+                $nik_masked = substr($nik, 0, 6) . '******' . substr($nik, -2);
+                echo htmlspecialchars($nik_masked); 
+            ?></div>
         </div>
     </section>
 

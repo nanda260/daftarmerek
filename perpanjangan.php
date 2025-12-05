@@ -19,7 +19,6 @@ if (!isset($_SESSION['NIK_NIP'])) {
 $NIK = $_SESSION['NIK_NIP'];
 
 // ===== HANDLER AJAX GENERATE SURAT =====
-// ===== HANDLER AJAX GENERATE SURAT =====
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action']) && $_POST['ajax_action'] === 'generate_surat') {
     // Matikan semua output buffering dulu
     while (ob_get_level()) {

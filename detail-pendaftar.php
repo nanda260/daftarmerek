@@ -2,12 +2,20 @@
 session_start();
 require_once 'process/config_db.php';
 require_once 'process/notification_helper.php';
+require_once 'process/crypto_helper.php';
 date_default_timezone_set('Asia/Jakarta');
 
-// Ambil ID pendaftaran dari URL
-$id_pendaftaran = isset($_GET['id']) ? intval($_GET['id']) : 0;
+ // Ambil encrypted ID dari URL
+ $encrypted_id = isset($_GET['ref']) ? $_GET['ref'] : '';
 
-if ($id_pendaftaran == 0) {
+ if (empty($encrypted_id)) {
+   header("Location: daftar-pendaftaran.php");
+   exit();
+ }
+
+ $id_pendaftaran = decryptId($encrypted_id);
+
+ if (!$id_pendaftaran || !is_numeric($id_pendaftaran)) {
   header("Location: daftar-pendaftaran.php");
   exit();
 }
@@ -295,7 +303,7 @@ try {
   $buktiPendaftaran = $stmt->fetch(PDO::FETCH_ASSOC);
 
   //  SERTIFIKAT
-  $stmt = $pdo->prepare("SELECT file_path, tgl_upload FROM lampiran WHERE id_pendaftaran = ? AND id_jenis_file = 7 ORDER BY tgl_upload DESC LIMIT 1");
+  $stmt = $pdo->prepare("SELECT file_path, tgl_upload, tanggal_terbit FROM lampiran WHERE id_pendaftaran = ? AND id_jenis_file = 7 ORDER BY tgl_upload DESC LIMIT 1");
   $stmt->execute([$id_pendaftaran]);
   $sertifikatMerek = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -2168,8 +2176,8 @@ function getBadgeClass($status)
       const sertifikatData = <?php echo json_encode($sertifikatMerek); ?>;
       const penolakanData = <?php echo json_encode($suratPenolakan); ?>;
 
-      if (sertifikatData && sertifikatData.file_path && sertifikatData.tgl_upload) {
-        const uploadDate = new Date(sertifikatData.tgl_upload);
+   if (sertifikatData && sertifikatData.file_path && sertifikatData.tanggal_terbit) {
+     const uploadDate = new Date(sertifikatData.tanggal_terbit);
         const expiryDate = new Date(uploadDate);
         expiryDate.setFullYear(expiryDate.getFullYear() + 10);
         expiryDate.setHours(0, 0, 0, 0); // Set ke akhir hari (23:59:59)
@@ -2339,6 +2347,14 @@ function getBadgeClass($status)
             </h6>
             <p class="text-muted small mb-3">Upload jika merek <strong>DITERIMA</strong> oleh kementerian</p>
             <form id="formSertifikat" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label class="form-label small">Tanggal Penerimaan Sertifikat <span class="text-danger">*</span></label>
+              <input type="date" 
+              class="form-control" 
+              id="tanggalSertifikat" 
+              required>
+             <div class="form-text">Masukkan tanggal saat sertifikat diterima dari kementerian</div>
+           </div>
               <div class="mb-3">
                 <input type="file" 
                        class="form-control" 
@@ -2479,11 +2495,18 @@ function getBadgeClass($status)
 
         function uploadSertifikat(file) {
           showConfirm('Apakah Anda yakin ingin mengupload Sertifikat Merek ini?', function() {
+     const tanggalInput = document.getElementById('tanggalSertifikat').value;
+     
+     if (!tanggalInput) {
+       showAlert('Tanggal penerimaan sertifikat wajib diisi!', 'danger');
+       return;
+     }
             // Kode upload HARUS di dalam callback ini
             const formData = new FormData();
             formData.append('id_pendaftaran', ID_PENDAFTARAN);
             formData.append('id_jenis_file', 7); // 7 = Sertifikat Terbit
             formData.append('file', file);
+            formData.append('tanggal_terbit', tanggalInput);
 
             const btnUpload = document.getElementById('btnUploadSertifikat');
             btnUpload.disabled = true;

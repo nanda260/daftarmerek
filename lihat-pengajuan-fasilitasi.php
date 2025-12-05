@@ -6,6 +6,7 @@ if (!isset($_SESSION['NIK_NIP']) || !isset($_SESSION['nama_lengkap'])) {
 }
 
 require_once 'process/config_db.php';
+require_once 'process/crypto_helper.php';
 
 $nik = $_SESSION['NIK_NIP'];
 $nama = $_SESSION['nama_lengkap'];
@@ -90,7 +91,7 @@ function getStatusBadgeClass($status)
         'Menunggu Bukti Pendaftaran' => 'emerald',
         'Bukti Pendaftaran Terbit dan Diajukan Ke Kementerian' => 'yellow',
         'Hasil Verifikasi Kementerian' => 'mint',
-        'Menunggu Surat Terbit' => 'warning',
+        'Menunggu Surat Terbit' => 'warn',
         'Surat Keterangan Terbit' => 'success',
     ];
 
@@ -134,7 +135,7 @@ function getStatusBadgeClass($status)
 
             <?php if (count($pendaftaran_list) > 0): ?>
                 <?php foreach ($pendaftaran_list as $index => $pendaftaran): ?>
-                    <div class="pengajuan-card" onclick="window.location.href='status-seleksi-pendaftaran.php?id=<?php echo $pendaftaran['id_pendaftaran']; ?>'">
+                    <div class="pengajuan-card" onclick="window.location.href='status-seleksi-pendaftaran.php?ref=<?php echo urlencode(encryptId($pendaftaran['id_pendaftaran'])); ?>'">
                         <div class="pengajuan-card-header">
                             <div>
                                 <div class="nomor-pendaftaran">
@@ -201,7 +202,7 @@ function getStatusBadgeClass($status)
 
             <?php if (count($pengajuan_mandiri_list) > 0): ?>
                 <?php foreach ($pengajuan_mandiri_list as $index => $pengajuan): ?>
-                    <div class="pengajuan-card" onclick="window.location.href='status-pengajuan-mandiri.php?id=<?php echo $pengajuan['id_pengajuan']; ?>'">
+                    <div class="pengajuan-card" onclick="window.location.href='status-pengajuan-mandiri.php?ref=<?php echo urlencode(encryptId($pengajuan['id_pengajuan'])); ?>'">
                         <div class="pengajuan-card-header">
                             <div>
                                 <div class="nomor-pendaftaran">
